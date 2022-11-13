@@ -118,8 +118,9 @@ public class CSimulation implements CPlayerAPI {
 		this.regionManager = new CRegionManager(entireMapBounds, pathingGrid);
 		CPathfindingProcessor.DeInit();
 		this.pathfindingProcessors = new CPathfindingProcessor[WarsmashConstants.MAX_PLAYERS];
+		CPathfindingProcessor processor = new CPathfindingProcessor(pathingGrid, this.worldCollision);
 		for (int i = 0; i < WarsmashConstants.MAX_PLAYERS; i++) {
-			this.pathfindingProcessors[i] = new CPathfindingProcessor(pathingGrid, this.worldCollision);
+			this.pathfindingProcessors[i] = processor;
 		}
 		this.seededRandom = seededRandom;
 		this.players = new ArrayList<>();

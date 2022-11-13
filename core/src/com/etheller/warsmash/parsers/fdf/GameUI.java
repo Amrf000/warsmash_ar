@@ -1,5 +1,6 @@
 package com.etheller.warsmash.parsers.fdf;
 
+import com.rpsg.lazyFont.LazyBitmapFont;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -103,6 +104,7 @@ public final class GameUI extends AbstractUIFrame implements UIFrame {
 	private final DynamicFontGeneratorHolder dynamicFontGeneratorHolder;
 	private final List<FocusableFrame> focusableFrames = new ArrayList<>();
 
+
 	public GameUI(final DataSource dataSource, final GameSkin skin, final Viewport viewport, final Scene uiScene,
 			final AbstractMdxModelViewer modelViewer, final int racialCommandIndex, final WTS mapStrings) {
 		super("GameUI", null);
@@ -124,10 +126,11 @@ public final class GameUI extends AbstractUIFrame implements UIFrame {
 		this.dynamicFontGeneratorHolder = new DynamicFontGeneratorHolder(this.modelViewer.dataSource, this.skin);
 		this.fontGenerator = this.dynamicFontGeneratorHolder.getFontGenerator("MasterFont");
 		final FreeTypeFontParameter fontParam = new FreeTypeFontParameter();
+		//fontParam.characters = characters;
 		fontParam.size = 32;
-		this.font = this.fontGenerator.generateFont(fontParam);
+		this.font = new LazyBitmapFont(this.fontGenerator, fontParam.size);
 		fontParam.size = 20;
-		this.font20 = this.fontGenerator.generateFont(fontParam);
+		this.font20 = new LazyBitmapFont(this.fontGenerator, fontParam.size);
 		this.fontParam = new FreeTypeFontParameter();
 		this.fdfCoordinateResolutionDummyViewport = new FitViewport(0.8f, 0.6f);
 		this.skinData = skin.getSkinsTable();
@@ -346,12 +349,13 @@ public final class GameUI extends AbstractUIFrame implements UIFrame {
 		if (this.fontParam.size == 0) {
 			this.fontParam.size = 128;
 		}
-		final BitmapFont frameFont = this.fontGenerator.generateFont(this.fontParam);
+		final BitmapFont frameFont = new LazyBitmapFont(this.fontGenerator, this.fontParam.size);
 		return frameFont;
 	}
 
 	public UIFrame inflate(final FrameDefinition frameDefinition, final UIFrame parent,
 			final FrameDefinition parentDefinitionIfAvailable, final boolean inDecorateFileNames) {
+		//this.fontParam.characters = characters;
 		UIFrame inflatedFrame = null;
 		BitmapFont frameFont = null;
 		Viewport viewport2 = this.viewport;
@@ -586,8 +590,7 @@ public final class GameUI extends AbstractUIFrame implements UIFrame {
 				if (this.fontParam.size == 0) {
 					this.fontParam.size = 24;
 				}
-				frameFont = this.dynamicFontGeneratorHolder.getFontGenerator(font.getFontName())
-						.generateFont(this.fontParam);
+				frameFont = new LazyBitmapFont(this.dynamicFontGeneratorHolder.getFontGenerator(font.getFontName()), this.fontParam.size);
 				String textString = frameDefinition.getName();
 				String text = frameDefinition.getString("Text");
 				if (text != null) {
@@ -1182,9 +1185,7 @@ public final class GameUI extends AbstractUIFrame implements UIFrame {
 				if (this.fontParam.size == 0) {
 					this.fontParam.size = 24;
 				}
-				frameFont = this.dynamicFontGeneratorHolder
-						.getFontGenerator(font == null ? "MasterFont" : font.getFontName())
-						.generateFont(this.fontParam);
+				frameFont = new LazyBitmapFont(this.dynamicFontGeneratorHolder.getFontGenerator(font == null ? "MasterFont" : font.getFontName()), this.fontParam.size);
 				controlFrame.setFrameFont(frameFont);
 				for (final FrameDefinition childDefinition : frameDefinition.getInnerFrames()) {
 					if (childDefinition.getName().equals(controlBackdropKey)) {
@@ -1238,8 +1239,7 @@ public final class GameUI extends AbstractUIFrame implements UIFrame {
 				if (this.fontParam.size == 0) {
 					this.fontParam.size = 24;
 				}
-				frameFont = this.dynamicFontGeneratorHolder.getFontGenerator(font.getFontName())
-						.generateFont(this.fontParam);
+				frameFont = new LazyBitmapFont(this.dynamicFontGeneratorHolder.getFontGenerator(font.getFontName()), this.fontParam.size);
 				controlFrame.setFrameFont(frameFont);
 
 				Color fontHighlightColor;
@@ -1394,8 +1394,7 @@ public final class GameUI extends AbstractUIFrame implements UIFrame {
 			if (this.fontParam.size == 0) {
 				this.fontParam.size = 24;
 			}
-			frameFont = this.dynamicFontGeneratorHolder.getFontGenerator(font.getFontName())
-					.generateFont(this.fontParam);
+			frameFont = new LazyBitmapFont(this.dynamicFontGeneratorHolder.getFontGenerator(font.getFontName()), this.fontParam.size);
 			String textString = frameDefinition.getName();
 			String text = frameDefinition.getString("Text");
 			if (text != null) {

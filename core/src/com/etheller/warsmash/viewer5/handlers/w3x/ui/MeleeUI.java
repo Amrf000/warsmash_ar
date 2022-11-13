@@ -1,5 +1,7 @@
 package com.etheller.warsmash.viewer5.handlers.w3x.ui;
 
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
+import com.rpsg.lazyFont.LazyBitmapFont;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
@@ -1239,15 +1241,10 @@ public class MeleeUI implements CUnitStateListener, CommandButtonListener, Comma
 		SequenceUtils.randomStandSequence(this.rallyPointInstance);
 		this.rallyPointInstance.hide();
 		this.waypointModel = this.war3MapViewer.loadModelMdx(this.rootFrame.getSkinField("WaypointIndicator"));
-
-		final FreeTypeFontParameter fontParam = new FreeTypeFontParameter();
-		fontParam.size = (int) GameUI.convertY(this.uiViewport, 0.012f);
-		this.textTagFont = this.rootFrame.getFontGenerator().generateFont(fontParam);
-
+		this.textTagFont = new LazyBitmapFont(this.rootFrame.getFontGenerator(),(int) GameUI.convertY(this.uiViewport, 0.012f));
 		this.rootFrame.positionBounds(this.rootFrame, this.uiViewport);
 
 		selectUnit(null);
-
 	}
 
 	private void updateEscMenuCurrentPanel(final UIFrame escMenuBackdrop, final UIFrame escMenuMainPanel,

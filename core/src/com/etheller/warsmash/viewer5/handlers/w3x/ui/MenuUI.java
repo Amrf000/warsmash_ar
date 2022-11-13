@@ -1787,7 +1787,7 @@ public class MenuUI {
 		final BitmapFont font = this.rootFrame.getFont();
 		final BitmapFont font20 = this.rootFrame.getFont20();
 		font.setColor(Color.YELLOW);
-		final String fpsString = "FPS: " + Gdx.graphics.getFramesPerSecond();
+		final String fpsString = "FPS: 你好" + Gdx.graphics.getFramesPerSecond();
 		glyphLayout.setText(font, fpsString);
 		font.draw(batch, fpsString, (getMinWorldWidth() - glyphLayout.width) / 2, 1100 * this.heightRatioCorrection);
 		this.rootFrame.render(batch, font20, glyphLayout);
