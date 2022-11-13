@@ -1,5 +1,5 @@
 plugins {
-    id 'org.beryx.runtime' version '1.12.5'
+    id 'org.beryx.runtime' version '1.12.7'
 }
 
 sourceSets.main.java.srcDirs = [ "src/" ]
@@ -16,7 +16,8 @@ if(project.hasProperty("args")) {
 }
 
 application {
-	mainClass = project.ext.mainClassName
+    mainClassName = project.ext.mainClassName
+	//mainClass = project.ext.mainClassName
 	applicationName = 'warsmash'
 	applicationDefaultJvmArgs = []
 }

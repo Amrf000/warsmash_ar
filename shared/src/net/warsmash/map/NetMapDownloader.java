@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.file.StandardOpenOption;
-import java.util.zip.CRC32C;
+import java.util.zip.CRC32;
 
 public class NetMapDownloader {
 	private final File mapFilePath;
@@ -54,8 +54,8 @@ public class NetMapDownloader {
 			throw new IllegalStateException(e);
 		}
 		try (FileChannel readerChannel = FileChannel.open(this.mapFilePath.toPath(), StandardOpenOption.READ)) {
-			final ByteBuffer readBuffer = ByteBuffer.allocate(8 * 1024).clear();
-			final CRC32C checksum = new CRC32C();
+			final ByteBuffer readBuffer = (ByteBuffer)ByteBuffer.allocate(8 * 1024).clear();
+			final CRC32 checksum = new CRC32();
 			checksum.reset();
 			while ((readerChannel.read(readBuffer)) != -1) {
 				readBuffer.flip();

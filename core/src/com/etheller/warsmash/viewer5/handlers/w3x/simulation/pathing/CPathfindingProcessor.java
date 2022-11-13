@@ -22,31 +22,44 @@ public class CPathfindingProcessor {
 	private final CWorldCollision worldCollision;
 	private final LinkedList<PathfindingJob> moveQueue = new LinkedList<>();
 	// things with modified state per current job:
-	private final Node[][] nodes;
-	private final Node[][] cornerNodes;
-	private final Node[] goalSet = new Node[4];
+	private static Node[][] nodes;//final
+	private static Node[][] cornerNodes;//final
+	private static final Node[] goalSet = new Node[4];
 	private int goals = 0;
 	private int pathfindJobId = 0;
 	private int totalIterations = 0;
 	private int totalJobLoops = 0;
 	private final int pathingGridCellCount;
 
+	static void Init(final PathingGrid pathingGrid, final CWorldCollision worldCollision)
+	{
+		if (nodes == null) {
+			nodes = new Node[pathingGrid.getHeight()][pathingGrid.getWidth()];
+			for (int i = 0; i < nodes.length; i++) {
+				for (int j = 0; j < nodes[i].length; j++) {
+					nodes[i][j] = new Node(new Point2D.Float(pathingGrid.getWorldX(j), pathingGrid.getWorldY(i)));
+				}
+			}
+		}
+		if (cornerNodes == null) {
+			cornerNodes = new Node[pathingGrid.getHeight() + 1][pathingGrid.getWidth() + 1];
+			for (int i = 0; i < cornerNodes.length; i++) {
+				for (int j = 0; j < cornerNodes[i].length; j++) {
+					cornerNodes[i][j] = new Node(
+							new Point2D.Float(pathingGrid.getWorldXFromCorner(j), pathingGrid.getWorldYFromCorner(i)));
+				}
+			}
+		}
+	}
+	public static void DeInit() {
+		nodes = null;
+		cornerNodes = null;
+	}
+
 	public CPathfindingProcessor(final PathingGrid pathingGrid, final CWorldCollision worldCollision) {
 		this.pathingGrid = pathingGrid;
 		this.worldCollision = worldCollision;
-		this.nodes = new Node[pathingGrid.getHeight()][pathingGrid.getWidth()];
-		this.cornerNodes = new Node[pathingGrid.getHeight() + 1][pathingGrid.getWidth() + 1];
-		for (int i = 0; i < this.nodes.length; i++) {
-			for (int j = 0; j < this.nodes[i].length; j++) {
-				this.nodes[i][j] = new Node(new Point2D.Float(pathingGrid.getWorldX(j), pathingGrid.getWorldY(i)));
-			}
-		}
-		for (int i = 0; i < this.cornerNodes.length; i++) {
-			for (int j = 0; j < this.cornerNodes[i].length; j++) {
-				this.cornerNodes[i][j] = new Node(
-						new Point2D.Float(pathingGrid.getWorldXFromCorner(j), pathingGrid.getWorldYFromCorner(i)));
-			}
-		}
+		Init(pathingGrid, worldCollision);
 		this.pathingGridCellCount = pathingGrid.getWidth() * pathingGrid.getHeight();
 	}
 

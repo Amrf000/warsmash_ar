@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.zip.CRC32C;
+import java.util.zip.CRC32;
 
 import com.badlogic.gdx.utils.IntIntMap;
 import com.badlogic.gdx.utils.viewport.Viewport;
@@ -582,7 +582,7 @@ public class BattleNetUI {
 		}
 
 		this.customCreatePanelCreateButton.setOnClick(new Runnable() {
-			private final CRC32C mapChecksumCalculator = new CRC32C();
+			private final CRC32 mapChecksumCalculator = new CRC32();
 
 			@Override
 			public void run() {

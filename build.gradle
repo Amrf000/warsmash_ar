@@ -6,7 +6,11 @@ buildscript {
 		}
         mavenCentral()
         gradlePluginPortal()
-        maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
+        maven {
+            //allowInsecureProtocol = true
+            url "http://maven.aliyun.com/nexus/content/groups/public/"
+        }
+//        maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
         maven { url "https://maven.nikr.net/" }
         google()
     }
@@ -29,10 +33,14 @@ allprojects {
         mavenCentral()
         google()
         gradlePluginPortal()
-        maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
-        maven { url "https://oss.sonatype.org/content/repositories/releases/" }
-        maven { url "https://maven.nikr.net/" }
-        maven { url "https://jitpack.io" }
+        maven {
+            // allowInsecureProtocol = true
+            url "http://maven.aliyun.com/nexus/content/groups/public/"
+        }
+//        maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
+//        maven { url "https://oss.sonatype.org/content/repositories/releases/" }
+       maven { url "https://maven.nikr.net/" }
+//        maven { url "https://jitpack.io" }
     }
 }
 
@@ -70,6 +78,7 @@ project(":core") {
         implementation project(":fdfparser")
         implementation project(":jassparser")
         api "com.badlogicgames.gdx:gdx:$gdxVersion"
+        api "com.badlogicgames.gdx:gdx-tools:$gdxVersion"
         api "com.badlogicgames.gdx:gdx-box2d:$gdxVersion"
         api "com.badlogicgames.gdx:gdx-freetype:$gdxVersion"
         api "com.google.guava:guava:23.5-jre"

@@ -188,7 +188,9 @@ public class War3Map implements DataSource {
 			checksum.reset();
 			while ((result = inputChannel.read(byteBuffer)) != -1) {
 				byteBuffer.flip();
-				checksum.update(byteBuffer);
+				byte[] arr = new byte[byteBuffer.remaining()];
+				byteBuffer.get(arr);
+				checksum.update(arr,0, arr.length);//byte[] b, int off, int len
 				byteBuffer.clear();
 			}
 			return checksum.getValue();

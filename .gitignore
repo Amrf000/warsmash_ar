@@ -134,3 +134,6 @@ Thumbs.db
 
 ## data
 /core/data
+
+Logs/
+*.hprof

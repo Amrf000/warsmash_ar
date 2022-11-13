@@ -10,7 +10,7 @@ import java.nio.channels.SeekableByteChannel;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.zip.CRC32C;
+import java.util.zip.CRC32;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -463,7 +463,7 @@ public class MenuUI {
 								final String mapFileLookupName = mapDownloadDir + File.separator + mapNameOnly;
 								File mapLookupFile = new File(mapFileLookupName);
 								boolean hasMap = false;
-								final CRC32C checksumCalculator = new CRC32C();
+								final CRC32 checksumCalculator = new CRC32();
 								War3Map map = null;
 								int tildeIndex = 1;
 								while (mapLookupFile.exists()) {
@@ -1561,7 +1561,7 @@ public class MenuUI {
 								.getInputChannel();
 						try {
 							inputChannel.position(0);
-							final ByteBuffer mapDataBuffer = ByteBuffer.allocate(1300).clear();
+							final ByteBuffer mapDataBuffer = (ByteBuffer)ByteBuffer.allocate(1300).clear();
 							int mapSeqNo = 0;
 							while (inputChannel.read(mapDataBuffer) != -1) {
 								mapDataBuffer.flip();

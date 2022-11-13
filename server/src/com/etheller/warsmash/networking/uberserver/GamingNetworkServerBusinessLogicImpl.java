@@ -671,7 +671,7 @@ public class GamingNetworkServerBusinessLogicImpl {
 			int sequenceNumber = 0;
 			connectionContext.beginSendMap();
 			try (FileChannel readerChannel = FileChannel.open(this.mapFile.toPath(), StandardOpenOption.READ)) {
-				final ByteBuffer readBuffer = ByteBuffer.allocate(1300).clear();
+				final ByteBuffer readBuffer = (ByteBuffer)ByteBuffer.allocate(1300).clear();
 				while ((readerChannel.read(readBuffer)) != -1) {
 					readBuffer.flip();
 					connectionContext.sendMapData(sequenceNumber++, readBuffer);
