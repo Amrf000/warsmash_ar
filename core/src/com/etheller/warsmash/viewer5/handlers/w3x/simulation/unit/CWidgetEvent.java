@@ -15,67 +15,67 @@ import com.etheller.warsmash.viewer5.handlers.w3x.simulation.abilities.targeting
 import com.etheller.warsmash.viewer5.handlers.w3x.simulation.trigger.JassGameEventsWar3;
 
 public class CWidgetEvent implements RemovableTriggerEvent {
-	private final GlobalScope globalScope;
-	private final CWidget widget;
-	private final Trigger trigger;
-	private final JassGameEventsWar3 eventType;
-	private final TriggerBooleanExpression filter;
+    private final GlobalScope globalScope;
+    private final CWidget widget;
+    private final Trigger trigger;
+    private final JassGameEventsWar3 eventType;
+    private final TriggerBooleanExpression filter;
 
-	public CWidgetEvent(final GlobalScope globalScope, final CWidget widget, final Trigger trigger,
-			final JassGameEventsWar3 eventType, final TriggerBooleanExpression filter) {
-		this.globalScope = globalScope;
-		this.widget = widget;
-		this.trigger = trigger;
-		this.eventType = eventType;
-		this.filter = filter;
-	}
+    public CWidgetEvent(final GlobalScope globalScope, final CWidget widget, final Trigger trigger,
+                        final JassGameEventsWar3 eventType, final TriggerBooleanExpression filter) {
+        this.globalScope = globalScope;
+        this.widget = widget;
+        this.trigger = trigger;
+        this.eventType = eventType;
+        this.filter = filter;
+    }
 
-	public Trigger getTrigger() {
-		return this.trigger;
-	}
+    public Trigger getTrigger() {
+        return this.trigger;
+    }
 
-	public JassGameEventsWar3 getEventType() {
-		return this.eventType;
-	}
+    public JassGameEventsWar3 getEventType() {
+        return this.eventType;
+    }
 
-	@Override
-	public void remove() {
-		this.widget.removeEvent(this);
-	}
+    @Override
+    public void remove() {
+        this.widget.removeEvent(this);
+    }
 
-	public void fire(final CWidget triggerWidget, final TriggerExecutionScope scope) {
-		this.globalScope.queueTrigger(this.filter, triggerWidget.visit(ScopeBuilder.INSTANCE.reset(scope)),
-				this.trigger, scope, scope);
-	}
+    public void fire(final CWidget triggerWidget, final TriggerExecutionScope scope) {
+        this.globalScope.queueTrigger(this.filter, triggerWidget.visit(ScopeBuilder.INSTANCE.reset(scope)),
+                this.trigger, scope, scope);
+    }
 
-	private static final class ScopeBuilder implements AbilityTargetVisitor<CommonTriggerExecutionScope> {
-		public static final ScopeBuilder INSTANCE = new ScopeBuilder();
-		private TriggerExecutionScope parentScope;
+    private static final class ScopeBuilder implements AbilityTargetVisitor<CommonTriggerExecutionScope> {
+        public static final ScopeBuilder INSTANCE = new ScopeBuilder();
+        private TriggerExecutionScope parentScope;
 
-		public ScopeBuilder reset(final TriggerExecutionScope parentScope) {
-			this.parentScope = parentScope;
-			return this;
-		}
+        public ScopeBuilder reset(final TriggerExecutionScope parentScope) {
+            this.parentScope = parentScope;
+            return this;
+        }
 
-		@Override
-		public CommonTriggerExecutionScope accept(final AbilityPointTarget target) {
-			throw new IllegalStateException("what?");
-		}
+        @Override
+        public CommonTriggerExecutionScope accept(final AbilityPointTarget target) {
+            throw new IllegalStateException("what?");
+        }
 
-		@Override
-		public CommonTriggerExecutionScope accept(final CUnit target) {
-			return CommonTriggerExecutionScope.filterScope(this.parentScope, target);
-		}
+        @Override
+        public CommonTriggerExecutionScope accept(final CUnit target) {
+            return CommonTriggerExecutionScope.filterScope(this.parentScope, target);
+        }
 
-		@Override
-		public CommonTriggerExecutionScope accept(final CDestructable target) {
-			return CommonTriggerExecutionScope.filterScope(this.parentScope, target);
-		}
+        @Override
+        public CommonTriggerExecutionScope accept(final CDestructable target) {
+            return CommonTriggerExecutionScope.filterScope(this.parentScope, target);
+        }
 
-		@Override
-		public CommonTriggerExecutionScope accept(final CItem target) {
-			return CommonTriggerExecutionScope.filterScope(this.parentScope, target);
-		}
+        @Override
+        public CommonTriggerExecutionScope accept(final CItem target) {
+            return CommonTriggerExecutionScope.filterScope(this.parentScope, target);
+        }
 
-	}
+    }
 }

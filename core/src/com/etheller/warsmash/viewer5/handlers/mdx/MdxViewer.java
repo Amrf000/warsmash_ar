@@ -11,26 +11,26 @@ import com.etheller.warsmash.viewer5.handlers.mdx.MdxHandler.ShaderEnvironmentTy
 import com.etheller.warsmash.viewer5.handlers.w3x.W3xScenePortraitLightManager;
 
 public class MdxViewer extends AbstractMdxModelViewer {
-	public static ShaderEnvironmentType DEFAULT_SHADER_ENV = ShaderEnvironmentType.MENU;
+    public static ShaderEnvironmentType DEFAULT_SHADER_ENV = ShaderEnvironmentType.MENU;
 
-	private final WorldEditStrings worldEditStrings;
-	private final Vector3 defaultLighting;
+    private final WorldEditStrings worldEditStrings;
+    private final Vector3 defaultLighting;
 
-	public MdxViewer(final DataSource dataSource, final CanvasProvider canvas, final Vector3 defaultLighting) {
-		super(dataSource, canvas);
-		MdxHandler.CURRENT_SHADER_TYPE = DEFAULT_SHADER_ENV;
-		this.defaultLighting = defaultLighting;
-		this.worldEditStrings = new WorldEditStrings(this.dataSource);
-	}
+    public MdxViewer(final DataSource dataSource, final CanvasProvider canvas, final Vector3 defaultLighting) {
+        super(dataSource, canvas);
+        MdxHandler.CURRENT_SHADER_TYPE = DEFAULT_SHADER_ENV;
+        this.defaultLighting = defaultLighting;
+        this.worldEditStrings = new WorldEditStrings(this.dataSource);
+    }
 
-	@Override
-	public SceneLightManager createLightManager(final boolean simple) {
-		return new W3xScenePortraitLightManager(this, this.defaultLighting);
-	}
+    @Override
+    public SceneLightManager createLightManager(final boolean simple) {
+        return new W3xScenePortraitLightManager(this, this.defaultLighting);
+    }
 
-	@Override
-	public StringBundle getWorldEditStrings() {
-		return this.worldEditStrings;
-	}
+    @Override
+    public StringBundle getWorldEditStrings() {
+        return this.worldEditStrings;
+    }
 
 }

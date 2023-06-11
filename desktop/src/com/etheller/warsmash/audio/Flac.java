@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright 2011 See AUTHORS file.
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * <p>
  *   http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,180 +16,167 @@
 
 package com.etheller.warsmash.audio;
 
-import java.io.BufferedOutputStream;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.util.Arrays;
-
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.badlogic.gdx.utils.StreamUtils;
 import com.etheller.warsmash.audio.Wav.WavInputStream;
-
 import io.nayuki.flac.common.StreamInfo;
 import io.nayuki.flac.decode.DataFormatException;
 import io.nayuki.flac.decode.FlacDecoder;
 
+import java.io.*;
+import java.util.Arrays;
+
 public class Flac {
-	static public class Music extends OpenALMusic {
-		private WavInputStream input;
+    private static byte[] makeItWav(final FileHandle file) throws IOException {
+        // Decode input FLAC file
+        StreamInfo streamInfo;
+        int[][] samples;
+        try (FlacDecoder dec = new FlacDecoder(file.readBytes())) {
 
-		public Music(final OpenALAudio audio, final FileHandle file) {
-			super(audio, file);
-			try {
-				this.input = new WavInputStream(new ByteArrayInputStream(makeItWav(file)), file);
-			}
-			catch (final IOException ex) {
-				throw new GdxRuntimeException("Error reading FLAC file: " + this.file, ex);
-			}
-			if (audio.noDevice) {
-				return;
-			}
-			setup(this.input.channels, this.input.sampleRate);
-		}
+            // Handle metadata header blocks
+            while (dec.readAndHandleMetadataBlock() != null) {
+            }
+            streamInfo = dec.streamInfo;
+            if ((streamInfo.sampleDepth % 8) != 0) {
+                throw new UnsupportedOperationException("Only whole-byte sample depth supported");
+            }
 
-		@Override
-		public int read(final byte[] buffer) {
-			if (this.input == null) {
-				try {
-					this.input = new WavInputStream(new ByteArrayInputStream(makeItWav(this.file)), this.file);
-				}
-				catch (final IOException ex) {
-					throw new GdxRuntimeException("Error reading FLAC file: " + this.file, ex);
-				}
-				setup(this.input.channels, this.input.sampleRate);
-			}
-			try {
-				return this.input.read(buffer);
-			}
-			catch (final IOException ex) {
-				throw new GdxRuntimeException("Error reading FLAC file: " + this.file, ex);
-			}
-		}
+            // Decode every block
+            samples = new int[streamInfo.numChannels][(int) streamInfo.numSamples];
+            for (int off = 0; ; ) {
+                final int len = dec.readAudioBlock(samples, off);
+                if (len == 0) {
+                    break;
+                }
+                off += len;
+            }
+        }
 
-		@Override
-		public void reset() {
-			StreamUtils.closeQuietly(this.input);
-			this.input = null;
-		}
-	}
+        // Check audio MD5 hash
+        final byte[] expectHash = streamInfo.md5Hash;
+        if (Arrays.equals(expectHash, new byte[16])) {
+            System.err.println("Warning: MD5 hash field was blank");
+        } else if (!Arrays.equals(StreamInfo.getMd5Hash(samples, streamInfo.sampleDepth), expectHash)) {
+            throw new DataFormatException("MD5 hash check failed");
+            // Else the hash check passed
+        }
 
-	static public class Sound extends OpenALSound {
-		public Sound(final OpenALAudio audio, final FileHandle file) {
-			super(audio);
-			if (audio.noDevice) {
-				return;
-			}
+        // Start writing WAV output file
+        int bytesPerSample = streamInfo.sampleDepth / 8;
+        final boolean needsDownscaleForLibgdx = bytesPerSample >= 3;
+        int downsampleBytes = 0;
+        if (needsDownscaleForLibgdx) {
+            downsampleBytes = bytesPerSample - 2;
+            bytesPerSample = 2;
+        }
+        final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        try (DataOutputStream out = new DataOutputStream(new BufferedOutputStream(baos))) {
+            // Header chunk
+            final int sampleDataLen = samples[0].length * streamInfo.numChannels * bytesPerSample;
+            out.writeInt(0x52494646); // "RIFF"
+            writeLittleInt32(out, sampleDataLen + 36);
+            out.writeInt(0x57415645); // "WAVE"
 
-			WavInputStream input = null;
-			try {
-				input = new WavInputStream(new ByteArrayInputStream(makeItWav(file)), file);
-				setup(StreamUtils.copyStreamToByteArray(input, input.dataRemaining), input.channels, input.sampleRate);
-			}
-			catch (final IOException ex) {
-				throw new GdxRuntimeException("Error reading FLAC file: " + file, ex);
-			}
-			finally {
-				StreamUtils.closeQuietly(input);
-			}
-		}
-	}
+            // Metadata chunk
+            out.writeInt(0x666D7420); // "fmt "
+            writeLittleInt32(out, 16);
+            writeLittleInt16(out, 0x0001);
+            writeLittleInt16(out, streamInfo.numChannels);
+            writeLittleInt32(out, streamInfo.sampleRate);
+            writeLittleInt32(out, streamInfo.sampleRate * streamInfo.numChannels * bytesPerSample);
+            writeLittleInt16(out, streamInfo.numChannels * bytesPerSample);
+            writeLittleInt16(out, needsDownscaleForLibgdx ? 16 : streamInfo.sampleDepth);
 
-	private static byte[] makeItWav(final FileHandle file) throws IOException {
-		// Decode input FLAC file
-		StreamInfo streamInfo;
-		int[][] samples;
-		try (FlacDecoder dec = new FlacDecoder(file.readBytes())) {
+            // Audio data chunk ("data")
+            out.writeInt(0x64617461); // "data"
+            writeLittleInt32(out, sampleDataLen);
+            for (int i = 0; i < samples[0].length; i++) {
+                for (int[] sample : samples) {
+                    int val = sample[i];
+                    for (int k = 0; k < downsampleBytes; k++) {
+                        val = val >>> 8;
+                    }
+                    if (bytesPerSample == 1) {
+                        out.write(val + 128); // Convert to unsigned, as per WAV PCM conventions
+                    } else { // 2 <= bytesPerSample <= 4
+                        for (int k = 0; k < bytesPerSample; k++) {
+                            out.write(val >>> (k * 8)); // Little endian
+                        }
+                    }
+                }
+            }
+            return baos.toByteArray();
+        }
+    }
 
-			// Handle metadata header blocks
-			while (dec.readAndHandleMetadataBlock() != null) {
-				;
-			}
-			streamInfo = dec.streamInfo;
-			if ((streamInfo.sampleDepth % 8) != 0) {
-				throw new UnsupportedOperationException("Only whole-byte sample depth supported");
-			}
+    private static void writeLittleInt16(final DataOutputStream out, final int x) throws IOException {
+        out.writeShort(Integer.reverseBytes(x) >>> 16);
+    }
 
-			// Decode every block
-			samples = new int[streamInfo.numChannels][(int) streamInfo.numSamples];
-			for (int off = 0;;) {
-				final int len = dec.readAudioBlock(samples, off);
-				if (len == 0) {
-					break;
-				}
-				off += len;
-			}
-		}
+    private static void writeLittleInt32(final DataOutputStream out, final int x) throws IOException {
+        out.writeInt(Integer.reverseBytes(x));
+    }
 
-		// Check audio MD5 hash
-		final byte[] expectHash = streamInfo.md5Hash;
-		if (Arrays.equals(expectHash, new byte[16])) {
-			System.err.println("Warning: MD5 hash field was blank");
-		}
-		else if (!Arrays.equals(StreamInfo.getMd5Hash(samples, streamInfo.sampleDepth), expectHash)) {
-			throw new DataFormatException("MD5 hash check failed");
-			// Else the hash check passed
-		}
+    // Helper members for writing WAV files
 
-		// Start writing WAV output file
-		int bytesPerSample = streamInfo.sampleDepth / 8;
-		final boolean needsDownscaleForLibgdx = bytesPerSample >= 3;
-		int downsampleBytes = 0;
-		if (needsDownscaleForLibgdx) {
-			downsampleBytes = bytesPerSample - 2;
-			bytesPerSample = 2;
-		}
-		final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		try (DataOutputStream out = new DataOutputStream(new BufferedOutputStream(baos))) {
-			// Header chunk
-			final int sampleDataLen = samples[0].length * streamInfo.numChannels * bytesPerSample;
-			out.writeInt(0x52494646); // "RIFF"
-			writeLittleInt32(out, sampleDataLen + 36);
-			out.writeInt(0x57415645); // "WAVE"
+    static public class Music extends OpenALMusic {
+        private WavInputStream input;
 
-			// Metadata chunk
-			out.writeInt(0x666D7420); // "fmt "
-			writeLittleInt32(out, 16);
-			writeLittleInt16(out, 0x0001);
-			writeLittleInt16(out, streamInfo.numChannels);
-			writeLittleInt32(out, streamInfo.sampleRate);
-			writeLittleInt32(out, streamInfo.sampleRate * streamInfo.numChannels * bytesPerSample);
-			writeLittleInt16(out, streamInfo.numChannels * bytesPerSample);
-			writeLittleInt16(out, needsDownscaleForLibgdx ? 16 : streamInfo.sampleDepth);
+        public Music(final OpenALAudio audio, final FileHandle file) {
+            super(audio, file);
+            try {
+                this.input = new WavInputStream(new ByteArrayInputStream(makeItWav(file)), file);
+            } catch (final IOException ex) {
+                throw new GdxRuntimeException("Error reading FLAC file: " + this.file, ex);
+            }
+            if (audio.noDevice) {
+                return;
+            }
+            setup(this.input.channels, this.input.sampleRate);
+        }
 
-			// Audio data chunk ("data")
-			out.writeInt(0x64617461); // "data"
-			writeLittleInt32(out, sampleDataLen);
-			for (int i = 0; i < samples[0].length; i++) {
-				for (int j = 0; j < samples.length; j++) {
-					int val = samples[j][i];
-					for (int k = 0; k < downsampleBytes; k++) {
-						val = val >>> 8;
-					}
-					if (bytesPerSample == 1) {
-						out.write(val + 128); // Convert to unsigned, as per WAV PCM conventions
-					}
-					else { // 2 <= bytesPerSample <= 4
-						for (int k = 0; k < bytesPerSample; k++) {
-							out.write(val >>> (k * 8)); // Little endian
-						}
-					}
-				}
-			}
-			return baos.toByteArray();
-		}
-	}
+        @Override
+        public int read(final byte[] buffer) {
+            if (this.input == null) {
+                try {
+                    this.input = new WavInputStream(new ByteArrayInputStream(makeItWav(this.file)), this.file);
+                } catch (final IOException ex) {
+                    throw new GdxRuntimeException("Error reading FLAC file: " + this.file, ex);
+                }
+                setup(this.input.channels, this.input.sampleRate);
+            }
+            try {
+                return this.input.read(buffer);
+            } catch (final IOException ex) {
+                throw new GdxRuntimeException("Error reading FLAC file: " + this.file, ex);
+            }
+        }
 
-	// Helper members for writing WAV files
+        @Override
+        public void reset() {
+            StreamUtils.closeQuietly(this.input);
+            this.input = null;
+        }
+    }
 
-	private static void writeLittleInt16(final DataOutputStream out, final int x) throws IOException {
-		out.writeShort(Integer.reverseBytes(x) >>> 16);
-	}
+    static public class Sound extends OpenALSound {
+        public Sound(final OpenALAudio audio, final FileHandle file) {
+            super(audio);
+            if (audio.noDevice) {
+                return;
+            }
 
-	private static void writeLittleInt32(final DataOutputStream out, final int x) throws IOException {
-		out.writeInt(Integer.reverseBytes(x));
-	}
+            WavInputStream input = null;
+            try {
+                input = new WavInputStream(new ByteArrayInputStream(makeItWav(file)), file);
+                setup(StreamUtils.copyStreamToByteArray(input, input.dataRemaining), input.channels, input.sampleRate);
+            } catch (final IOException ex) {
+                throw new GdxRuntimeException("Error reading FLAC file: " + file, ex);
+            } finally {
+                StreamUtils.closeQuietly(input);
+            }
+        }
+    }
 
 }

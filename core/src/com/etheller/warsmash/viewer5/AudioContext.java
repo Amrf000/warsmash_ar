@@ -1,110 +1,109 @@
 package com.etheller.warsmash.viewer5;
 
 public class AudioContext {
-	private boolean running = false;
-	public Listener listener;
-	public AudioDestination destination;
+    public final Listener listener;
+    public final AudioDestination destination;
+    private boolean running = false;
 
-	public AudioContext(final Listener listener, final AudioDestination destination) {
-		this.listener = listener;
-		this.destination = destination;
-	}
+    public AudioContext(final Listener listener, final AudioDestination destination) {
+        this.listener = listener;
+        this.destination = destination;
+    }
 
-	public void suspend() {
-		this.running = false;
-	}
+    public void suspend() {
+        this.running = false;
+    }
 
-	public boolean isRunning() {
-		return this.running;
-	}
+    public boolean isRunning() {
+        return this.running;
+    }
 
-	public void resume() {
-		this.running = true;
-	}
+    public void resume() {
+        this.running = true;
+    }
 
-	public static interface Listener {
+    public AudioPanner createPanner() {
+        return createPanner(true);
+    }
 
-		float getX();
+    public AudioPanner createPanner(final boolean stopWhenOutOfRange) {
+        if (!stopWhenOutOfRange) {
+            return new AudioPanner(this.listener) {
+                @Override
+                public void connect(final AudioDestination destination) {
+                }
 
-		float getY();
+                @Override
+                public boolean isWithinListenerDistance() {
+                    return true;
+                }
+            };
+        } else {
+            return new AudioPanner(this.listener) {
+                @Override
+                public void connect(final AudioDestination destination) {
+                }
+            };
+        }
+    }
 
-		float getZ();
+    public AudioBufferSource createBufferSource() {
+        return new AudioBufferSource();
+    }
 
-		public void setPosition(final float x, final float y, final float z);
+    public interface Listener {
 
-		public void setOrientation(final float forwardX, final float forwardY, final float forwardZ, final float upX,
-				final float upY, final float upZ);
+        Listener DO_NOTHING = new Listener() {
+            private float x;
+            private float y;
+            private float z;
 
-		boolean is3DSupported();
+            @Override
+            public void setPosition(final float x, final float y, final float z) {
+                this.x = x;
+                this.y = y;
+                this.z = z;
+            }
 
-		Listener DO_NOTHING = new Listener() {
-			private float x;
-			private float y;
-			private float z;
+            @Override
+            public float getX() {
+                return x;
+            }
 
-			@Override
-			public void setPosition(final float x, final float y, final float z) {
-				this.x = x;
-				this.y = y;
-				this.z = z;
-			}
+            @Override
+            public float getY() {
+                return y;
+            }
 
-			@Override
-			public float getX() {
-				return x;
-			}
+            @Override
+            public float getZ() {
+                return z;
+            }
 
-			@Override
-			public float getY() {
-				return y;
-			}
+            @Override
+            public void setOrientation(final float forwardX, final float forwardY, final float forwardZ,
+                                       final float upX, final float upY, final float upZ) {
 
-			@Override
-			public float getZ() {
-				return z;
-			}
+            }
 
-			@Override
-			public void setOrientation(final float forwardX, final float forwardY, final float forwardZ,
-					final float upX, final float upY, final float upZ) {
+            @Override
+            public boolean is3DSupported() {
+                return false;
+            }
+        };
 
-			}
+        float getX();
 
-			@Override
-			public boolean is3DSupported() {
-				return false;
-			}
-		};
-	}
+        float getY();
 
-	public AudioPanner createPanner() {
-		return createPanner(true);
-	}
+        float getZ();
 
-	public AudioPanner createPanner(final boolean stopWhenOutOfRange) {
-		if (!stopWhenOutOfRange) {
-			return new AudioPanner(this.listener) {
-				@Override
-				public void connect(final AudioDestination destination) {
-				}
+        void setPosition(final float x, final float y, final float z);
 
-				@Override
-				public boolean isWithinListenerDistance() {
-					return true;
-				}
-			};
-		}
-		else {
-			return new AudioPanner(this.listener) {
-				@Override
-				public void connect(final AudioDestination destination) {
-				}
-			};
-		}
-	}
+        void setOrientation(final float forwardX, final float forwardY, final float forwardZ, final float upX,
+                            final float upY, final float upZ);
 
-	public AudioBufferSource createBufferSource() {
-		return new AudioBufferSource();
-	}
+        boolean is3DSupported();
+    }
 
 }

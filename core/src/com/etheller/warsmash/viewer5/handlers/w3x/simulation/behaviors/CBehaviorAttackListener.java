@@ -7,29 +7,29 @@ import com.etheller.warsmash.viewer5.handlers.w3x.simulation.combat.attacks.CUni
 
 public interface CBehaviorAttackListener extends CUnitAttackListener {
 
-	// For this function, return the current attack behavior to keep attacking, or
-	// else return something else to interrupt it
-	CBehavior onFirstUpdateAfterBackswing(CBehaviorAttack currentAttackBehavior);
+    CBehaviorAttackListener DO_NOTHING = new CBehaviorAttackListener() {
+        @Override
+        public void onHit(final AbilityTarget target, final float damage) {
+        }
 
-	CBehavior onFinish(CSimulation game, final CUnit finishingUnit);
+        @Override
+        public void onLaunch() {
+        }
 
-	CBehaviorAttackListener DO_NOTHING = new CBehaviorAttackListener() {
-		@Override
-		public void onHit(final AbilityTarget target, final float damage) {
-		}
+        @Override
+        public CBehavior onFirstUpdateAfterBackswing(final CBehaviorAttack currentAttackBehavior) {
+            return currentAttackBehavior;
+        }
 
-		@Override
-		public void onLaunch() {
-		}
+        @Override
+        public CBehavior onFinish(final CSimulation game, final CUnit finishingUnit) {
+            return finishingUnit.pollNextOrderBehavior(game);
+        }
+    };
 
-		@Override
-		public CBehavior onFirstUpdateAfterBackswing(final CBehaviorAttack currentAttackBehavior) {
-			return currentAttackBehavior;
-		}
+    // For this function, return the current attack behavior to keep attacking, or
+    // else return something else to interrupt it
+    CBehavior onFirstUpdateAfterBackswing(CBehaviorAttack currentAttackBehavior);
 
-		@Override
-		public CBehavior onFinish(final CSimulation game, final CUnit finishingUnit) {
-			return finishingUnit.pollNextOrderBehavior(game);
-		}
-	};
+    CBehavior onFinish(CSimulation game, final CUnit finishingUnit);
 }

@@ -15,14 +15,32 @@ import com.etheller.warsmash.viewer5.handlers.w3x.simulation.util.ResourceType;
 import com.etheller.warsmash.viewer5.handlers.w3x.simulation.util.SimulationRenderComponent;
 
 public class CBehaviorWispHarvest extends CAbstractRangedBehavior {
-    private int lastIncomeTick;
     private final CAbilityWispHarvest abilityWispHarvest;
+    private int lastIncomeTick;
     private boolean harvesting = false;
     private SimulationRenderComponent spellEffectOverDestructable;
 
     public CBehaviorWispHarvest(CUnit unit, CAbilityWispHarvest abilityWispHarvest) {
         super(unit);
         this.abilityWispHarvest = abilityWispHarvest;
+    }
+
+    public static CDestructable findNearestTree(final CUnit worker, final CAbilityWispHarvest abilityHarvest,
+                                                final CSimulation simulation, final CWidget toObject) {
+        CDestructable nearestMine = null;
+        double nearestMineDistance = abilityHarvest.getCastRange() * abilityHarvest.getCastRange();
+        for (final CDestructable unit : simulation.getDestructables()) {
+            if (!unit.isDead()
+                    && !simulation.isTreeOwned(unit)
+                    && unit.canBeTargetedBy(simulation, worker, CAbilityWispHarvest.TREE_ALIVE_TYPE_ONLY)) {
+                final double distance = unit.distanceSquaredNoCollision(toObject);
+                if (distance < nearestMineDistance) {
+                    nearestMineDistance = distance;
+                    nearestMine = unit;
+                }
+            }
+        }
+        return nearestMine;
     }
 
     public CBehaviorWispHarvest reset(final CWidget target) {
@@ -32,7 +50,7 @@ public class CBehaviorWispHarvest extends CAbstractRangedBehavior {
 
     @Override
     protected CBehavior update(CSimulation simulation, boolean withinFacingWindow) {
-        if(target.getX() != unit.getX() || target.getY() != unit.getY()) {
+        if (target.getX() != unit.getX() || target.getY() != unit.getY()) {
             unit.setX(target.getX(), simulation.getWorldCollision(), simulation.getRegionManager());
             unit.setY(target.getY(), simulation.getWorldCollision(), simulation.getRegionManager());
             simulation.unitRepositioned(unit); // dont interpolate, instant jump
@@ -45,7 +63,7 @@ public class CBehaviorWispHarvest extends CAbstractRangedBehavior {
             simulation.unitGainResourceEvent(this.unit, ResourceType.LUMBER,
                     abilityWispHarvest.getLumberPerInterval());
         }
-        if(!harvesting) {
+        if (!harvesting) {
             onStartHarvesting(simulation);
             harvesting = true;
         }
@@ -57,15 +75,15 @@ public class CBehaviorWispHarvest extends CAbstractRangedBehavior {
         simulation.unitLoopSoundEffectEvent(unit, abilityWispHarvest.getAlias());
         // TODO maybe use visitor instead of cast
         spellEffectOverDestructable = simulation.createSpellEffectOverDestructable(this.unit, (CDestructable) this.target, abilityWispHarvest.getAlias(), abilityWispHarvest.getArtAttachmentHeight());
-        simulation.tagTreeOwned((CDestructable)target);
+        simulation.tagTreeOwned((CDestructable) target);
     }
 
     private void onStopHarvesting(CSimulation simulation) {
         unit.getUnitAnimationListener().removeSecondaryTag(AnimationTokens.SecondaryTag.LUMBER);
         simulation.unitStopSoundEffectEvent(unit, abilityWispHarvest.getAlias());
-        simulation.untagTreeOwned((CDestructable)target);
+        simulation.untagTreeOwned((CDestructable) target);
         // TODO maybe use visitor instead of cast
-        if(spellEffectOverDestructable != null) {
+        if (spellEffectOverDestructable != null) {
             spellEffectOverDestructable.remove();
             spellEffectOverDestructable = null;
         }
@@ -75,7 +93,7 @@ public class CBehaviorWispHarvest extends CAbstractRangedBehavior {
     protected CBehavior updateOnInvalidTarget(CSimulation simulation) {
         if (this.target instanceof CDestructable) {
             // wood
-            if(harvesting) {
+            if (harvesting) {
                 onStopHarvesting(simulation);
                 harvesting = false;
             }
@@ -90,8 +108,8 @@ public class CBehaviorWispHarvest extends CAbstractRangedBehavior {
 
     @Override
     protected boolean checkTargetStillValid(CSimulation simulation) {
-        if(this.target instanceof  CDestructable) {
-            if(!harvesting && simulation.isTreeOwned((CDestructable)this.target)) {
+        if (this.target instanceof CDestructable) {
+            if (!harvesting && simulation.isTreeOwned((CDestructable) this.target)) {
                 return false;
             }
         }
@@ -100,7 +118,7 @@ public class CBehaviorWispHarvest extends CAbstractRangedBehavior {
 
     @Override
     protected void resetBeforeMoving(CSimulation simulation) {
-        if(harvesting) {
+        if (harvesting) {
             onStopHarvesting(simulation);
             harvesting = false;
         }
@@ -123,7 +141,7 @@ public class CBehaviorWispHarvest extends CAbstractRangedBehavior {
 
     @Override
     public void end(CSimulation game, boolean interrupted) {
-        if(harvesting) {
+        if (harvesting) {
             onStopHarvesting(game);
             harvesting = false;
         }
@@ -132,23 +150,5 @@ public class CBehaviorWispHarvest extends CAbstractRangedBehavior {
     @Override
     public int getHighlightOrderId() {
         return OrderIds.wispharvest;
-    }
-
-    public static CDestructable findNearestTree(final CUnit worker, final CAbilityWispHarvest abilityHarvest,
-                                                final CSimulation simulation, final CWidget toObject) {
-        CDestructable nearestMine = null;
-        double nearestMineDistance = abilityHarvest.getCastRange()*abilityHarvest.getCastRange();
-        for (final CDestructable unit : simulation.getDestructables()) {
-            if (!unit.isDead()
-                    && !simulation.isTreeOwned(unit)
-                    && unit.canBeTargetedBy(simulation, worker, CAbilityWispHarvest.TREE_ALIVE_TYPE_ONLY)) {
-                final double distance = unit.distanceSquaredNoCollision(toObject);
-                if (distance < nearestMineDistance) {
-                    nearestMineDistance = distance;
-                    nearestMine = unit;
-                }
-            }
-        }
-        return nearestMine;
     }
 }

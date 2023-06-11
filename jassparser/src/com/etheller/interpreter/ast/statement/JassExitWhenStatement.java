@@ -9,21 +9,21 @@ import com.etheller.interpreter.ast.value.StringJassValue;
 import com.etheller.interpreter.ast.value.visitor.BooleanJassValueVisitor;
 
 public class JassExitWhenStatement implements JassStatement {
-	public static final StringJassValue LOOP_EXIT_NOTICE = new StringJassValue("EXIT");
-	private final JassExpression expression;
+    public static final StringJassValue LOOP_EXIT_NOTICE = new StringJassValue("EXIT");
+    private final JassExpression expression;
 
-	public JassExitWhenStatement(final JassExpression expression) {
-		this.expression = expression;
-	}
+    public JassExitWhenStatement(final JassExpression expression) {
+        this.expression = expression;
+    }
 
-	@Override
-	public JassValue execute(final GlobalScope globalScope, final LocalScope localScope,
-			final TriggerExecutionScope triggerScope) {
-		if (this.expression.evaluate(globalScope, localScope, triggerScope)
-				.visit(BooleanJassValueVisitor.getInstance())) {
-			return LOOP_EXIT_NOTICE;
-		}
-		return null;
-	}
+    @Override
+    public JassValue execute(final GlobalScope globalScope, final LocalScope localScope,
+                             final TriggerExecutionScope triggerScope) {
+        if (this.expression.evaluate(globalScope, localScope, triggerScope)
+                .visit(BooleanJassValueVisitor.getInstance())) {
+            return LOOP_EXIT_NOTICE;
+        }
+        return null;
+    }
 
 }

@@ -9,71 +9,71 @@ import com.etheller.warsmash.viewer5.handlers.w3x.simulation.abilities.targeting
 
 public class CBehaviorFollow extends CAbstractRangedBehavior {
 
-	private int higlightOrderId;
-	private boolean justAutoAttacked = false;
+    private int higlightOrderId;
+    private boolean justAutoAttacked = false;
 
-	public CBehaviorFollow(final CUnit unit) {
-		super(unit);
-	}
+    public CBehaviorFollow(final CUnit unit) {
+        super(unit);
+    }
 
-	public CBehavior reset(final int higlightOrderId, final CWidget target) {
-		this.higlightOrderId = higlightOrderId;
-		return innerReset(target);
-	}
+    public CBehavior reset(final int higlightOrderId, final CWidget target) {
+        this.higlightOrderId = higlightOrderId;
+        return innerReset(target);
+    }
 
-	@Override
-	public int getHighlightOrderId() {
-		return this.higlightOrderId;
-	}
+    @Override
+    public int getHighlightOrderId() {
+        return this.higlightOrderId;
+    }
 
-	@Override
-	public boolean isWithinRange(final CSimulation simulation) {
-		if (this.justAutoAttacked = this.unit.autoAcquireAttackTargets(simulation, false)) {
-			return true;
-		}
-		return this.unit.canReach(this.target, this.unit.getAcquisitionRange());
-	}
+    @Override
+    public boolean isWithinRange(final CSimulation simulation) {
+        if (this.justAutoAttacked == this.unit.autoAcquireAttackTargets(simulation, false)) {
+            return true;
+        }
+        return this.unit.canReach(this.target, this.unit.getAcquisitionRange());
+    }
 
-	@Override
-	protected CBehavior update(final CSimulation simulation, final boolean withinFacingWindow) {
+    @Override
+    protected CBehavior update(final CSimulation simulation, final boolean withinFacingWindow) {
 
-		this.unit.getUnitAnimationListener().playAnimation(false, PrimaryTag.STAND, SequenceUtils.EMPTY, 1.0f, false);
-		return this;
-	}
+        this.unit.getUnitAnimationListener().playAnimation(false, PrimaryTag.STAND, SequenceUtils.EMPTY, 1.0f, false);
+        return this;
+    }
 
-	@Override
-	protected CBehavior updateOnInvalidTarget(final CSimulation simulation) {
-		this.unit.setDefaultBehavior(this.unit.getStopBehavior());
-		return this.unit.pollNextOrderBehavior(simulation);
-	}
+    @Override
+    protected CBehavior updateOnInvalidTarget(final CSimulation simulation) {
+        this.unit.setDefaultBehavior(this.unit.getStopBehavior());
+        return this.unit.pollNextOrderBehavior(simulation);
+    }
 
-	@Override
-	protected boolean checkTargetStillValid(final CSimulation simulation) {
-		if (this.justAutoAttacked) {
-			this.justAutoAttacked = false;
-			this.unit.getMoveBehavior().reset(this.target, this, false);
-		}
-		return this.target.visit(AbilityTargetStillAliveVisitor.INSTANCE);
-	}
+    @Override
+    protected boolean checkTargetStillValid(final CSimulation simulation) {
+        if (this.justAutoAttacked) {
+            this.justAutoAttacked = false;
+            this.unit.getMoveBehavior().reset(this.target, this, false);
+        }
+        return this.target.visit(AbilityTargetStillAliveVisitor.INSTANCE);
+    }
 
-	@Override
-	protected void resetBeforeMoving(final CSimulation simulation) {
+    @Override
+    protected void resetBeforeMoving(final CSimulation simulation) {
 
-	}
+    }
 
-	@Override
-	public void begin(final CSimulation game) {
+    @Override
+    public void begin(final CSimulation game) {
 
-	}
+    }
 
-	@Override
-	public void end(final CSimulation game, final boolean interrupted) {
+    @Override
+    public void end(final CSimulation game, final boolean interrupted) {
 
-	}
+    }
 
-	@Override
-	public void endMove(final CSimulation game, final boolean interrupted) {
+    @Override
+    public void endMove(final CSimulation game, final boolean interrupted) {
 
-	}
+    }
 
 }

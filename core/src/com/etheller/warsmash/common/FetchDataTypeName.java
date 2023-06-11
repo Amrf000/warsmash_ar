@@ -5,9 +5,9 @@ package com.etheller.warsmash.common;
  * copying from.
  */
 public enum FetchDataTypeName {
-	IMAGE,
-	TEXT,
-	SLK,
-	ARRAY_BUFFER,
-	BLOB;
+    IMAGE,
+    TEXT,
+    SLK,
+    ARRAY_BUFFER,
+    BLOB
 }

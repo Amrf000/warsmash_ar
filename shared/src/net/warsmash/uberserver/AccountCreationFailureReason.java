@@ -1,7 +1,7 @@
 package net.warsmash.uberserver;
 
 public enum AccountCreationFailureReason {
-	USERNAME_ALREADY_EXISTS;
+    USERNAME_ALREADY_EXISTS;
 
-	public static AccountCreationFailureReason VALUES[] = values();
+    public static final AccountCreationFailureReason[] VALUES = values();
 }

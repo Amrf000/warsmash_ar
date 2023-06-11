@@ -1,7 +1,7 @@
 package net.warsmash.uberserver;
 
 public enum HostedGameVisibility {
-	PUBLIC, PRIVATE;
+    PUBLIC, PRIVATE;
 
-	public static HostedGameVisibility VALUES[] = values();
+    public static final HostedGameVisibility[] VALUES = values();
 }

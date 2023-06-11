@@ -8,21 +8,21 @@ import com.etheller.warsmash.viewer5.handlers.w3x.simulation.trigger.JassGameEve
 
 public class War3MapConfigPlayer extends CBasePlayer {
 
-	public War3MapConfigPlayer(final CBasePlayer other) {
-		super(other);
-	}
+    public War3MapConfigPlayer(final CBasePlayer other) {
+        super(other);
+    }
 
-	public War3MapConfigPlayer(final int id) {
-		super(id);
-	}
+    public War3MapConfigPlayer(final int id) {
+        super(id);
+    }
 
-	@Override
-	public RemovableTriggerEvent addEvent(final GlobalScope globalScope, final Trigger whichTrigger,
-			final JassGameEventsWar3 eventType) {
-		return RemovableTriggerEvent.DO_NOTHING;
-	}
+    @Override
+    public RemovableTriggerEvent addEvent(final GlobalScope globalScope, final Trigger whichTrigger,
+                                          final JassGameEventsWar3 eventType) {
+        return RemovableTriggerEvent.DO_NOTHING;
+    }
 
-	@Override
-	public void removeEvent(final CPlayerEvent playerEvent) {
-	}
+    @Override
+    public void removeEvent(final CPlayerEvent playerEvent) {
+    }
 }

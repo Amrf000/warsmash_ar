@@ -1,7 +1,7 @@
 package com.etheller.warsmash.viewer5.handlers;
 
 public interface EmitterObject {
-	boolean ok();
+    boolean ok();
 
-	int getGeometryEmitterType();
+    int getGeometryEmitterType();
 }

@@ -7,48 +7,48 @@ import com.etheller.warsmash.viewer5.handlers.w3x.simulation.combat.CTargetType;
 import java.util.EnumSet;
 
 public class CAbilityTypeRootLevelData extends CAbilityTypeLevelData {
-	private int rootedWeaponsAttackBits;
-	private int uprootedWeaponsAttackBits;
-	private boolean rootedTurning;
-	private CDefenseType uprootedDefenseType;
-	private float duration;
-	private float offDuration;
-	
+    private final int rootedWeaponsAttackBits;
+    private final int uprootedWeaponsAttackBits;
+    private final boolean rootedTurning;
+    private final CDefenseType uprootedDefenseType;
+    private final float duration;
+    private final float offDuration;
 
-	public CAbilityTypeRootLevelData(EnumSet<CTargetType> targetsAllowed, int rootedWeaponsAttackBits,
-			int uprootedWeaponsAttackBits, boolean rootedTurning, CDefenseType uprootedDefenseType, float duration,
-			float offDuration) {
-		super(targetsAllowed);
-		this.rootedWeaponsAttackBits = rootedWeaponsAttackBits;
-		this.uprootedWeaponsAttackBits = uprootedWeaponsAttackBits;
-		this.rootedTurning = rootedTurning;
-		this.uprootedDefenseType = uprootedDefenseType;
-		this.duration = duration;
-		this.offDuration = offDuration;
-	}
 
-	public int getRootedWeaponsAttackBits() {
-		return rootedWeaponsAttackBits;
-	}
+    public CAbilityTypeRootLevelData(EnumSet<CTargetType> targetsAllowed, int rootedWeaponsAttackBits,
+                                     int uprootedWeaponsAttackBits, boolean rootedTurning, CDefenseType uprootedDefenseType, float duration,
+                                     float offDuration) {
+        super(targetsAllowed);
+        this.rootedWeaponsAttackBits = rootedWeaponsAttackBits;
+        this.uprootedWeaponsAttackBits = uprootedWeaponsAttackBits;
+        this.rootedTurning = rootedTurning;
+        this.uprootedDefenseType = uprootedDefenseType;
+        this.duration = duration;
+        this.offDuration = offDuration;
+    }
 
-	public int getUprootedWeaponsAttackBits() {
-		return uprootedWeaponsAttackBits;
-	}
+    public int getRootedWeaponsAttackBits() {
+        return rootedWeaponsAttackBits;
+    }
 
-	public boolean isRootedTurning() {
-		return rootedTurning;
-	}
+    public int getUprootedWeaponsAttackBits() {
+        return uprootedWeaponsAttackBits;
+    }
 
-	public CDefenseType getUprootedDefenseType() {
-		return uprootedDefenseType;
-	}
+    public boolean isRootedTurning() {
+        return rootedTurning;
+    }
 
-	public float getDuration() {
-		return duration;
-	}
+    public CDefenseType getUprootedDefenseType() {
+        return uprootedDefenseType;
+    }
 
-	public float getOffDuration() {
-		return offDuration;
-	}
-	
+    public float getDuration() {
+        return duration;
+    }
+
+    public float getOffDuration() {
+        return offDuration;
+    }
+
 }

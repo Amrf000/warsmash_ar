@@ -8,58 +8,58 @@ import com.etheller.warsmash.viewer5.handlers.w3x.simulation.trigger.JassGameEve
 import com.etheller.warsmash.viewer5.handlers.w3x.simulation.trigger.enumtypes.CPlayerSlotState;
 
 public interface CPlayerJass {
-	int getId();
+    int getId();
 
-	void setTeam(int team);
+    void forceStartLocation(int startLocIndex);
 
-	void setStartLocationIndex(int startLocIndex);
+    void setAlliance(int otherPlayerIndex, CAllianceType whichAllianceSetting, boolean value);
 
-	void forceStartLocation(int startLocIndex);
+    boolean hasAlliance(int otherPlayerIndex, CAllianceType allianceType);
 
-	void setColor(int colorIndex);
+    void setTaxRate(int otherPlayerIndex, CPlayerState whichResource, int rate);
 
-	void setAlliance(int otherPlayerIndex, CAllianceType whichAllianceSetting, boolean value);
+    void setRacePref(CRacePreference whichRacePreference);
 
-	boolean hasAlliance(int otherPlayerIndex, CAllianceType allianceType);
+    void setOnScoreScreen(boolean flag);
 
-	void setTaxRate(int otherPlayerIndex, CPlayerState whichResource, int rate);
+    int getTeam();
 
-	void setRacePref(CRacePreference whichRacePreference);
+    void setTeam(int team);
 
-	void setRaceSelectable(boolean selectable);
+    int getStartLocationIndex();
 
-	void setController(CMapControl mapControl);
+    void setStartLocationIndex(int startLocIndex);
 
-	void setSlotState(CPlayerSlotState slotState);
+    int getColor();
 
-	void setAIDifficulty(AIDifficulty aiDifficulty);
+    void setColor(int colorIndex);
 
-	void setName(String name);
+    boolean isRaceSelectable();
 
-	void setOnScoreScreen(boolean flag);
+    void setRaceSelectable(boolean selectable);
 
-	int getTeam();
+    CMapControl getController();
 
-	int getStartLocationIndex();
+    void setController(CMapControl mapControl);
 
-	int getColor();
+    CPlayerSlotState getSlotState();
 
-	boolean isRaceSelectable();
+    void setSlotState(CPlayerSlotState slotState);
 
-	CMapControl getController();
+    AIDifficulty getAIDifficulty();
 
-	CPlayerSlotState getSlotState();
+    void setAIDifficulty(AIDifficulty aiDifficulty);
 
-	AIDifficulty getAIDifficulty();
+    int getTaxRate(int otherPlayerIndex, CPlayerState whichResource);
 
-	int getTaxRate(int otherPlayerIndex, CPlayerState whichResource);
+    boolean isRacePrefSet(CRacePreference pref);
 
-	boolean isRacePrefSet(CRacePreference pref);
+    String getName();
 
-	String getName();
+    void setName(String name);
 
-	RemovableTriggerEvent addEvent(final GlobalScope globalScope, final Trigger whichTrigger,
-			final JassGameEventsWar3 eventType);
+    RemovableTriggerEvent addEvent(final GlobalScope globalScope, final Trigger whichTrigger,
+                                   final JassGameEventsWar3 eventType);
 
-	void removeEvent(CPlayerEvent playerEvent);
+    void removeEvent(CPlayerEvent playerEvent);
 }

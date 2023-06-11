@@ -3,29 +3,29 @@ package com.etheller.warsmash.viewer5.handlers.w3x.simulation.util;
 import com.etheller.warsmash.util.War3ID;
 
 public interface AbilityActivationReceiver {
-	void useOk();
+    void useOk();
 
-	void unknownReasonUseNotOk();
+    void unknownReasonUseNotOk();
 
-	void notEnoughResources(ResourceType resource);
+    void notEnoughResources(ResourceType resource);
 
-	void notAnActiveAbility();
+    void notAnActiveAbility();
 
-	void missingRequirement(War3ID type, int level);
+    void missingRequirement(War3ID type, int level);
 
-	void missingHeroLevelRequirement(int level);
+    void missingHeroLevelRequirement(int level);
 
-	void noHeroSkillPointsAvailable();
+    void noHeroSkillPointsAvailable();
 
-	void casterMovementDisabled();
+    void casterMovementDisabled();
 
-	void cargoCapacityUnavailable();
+    void cargoCapacityUnavailable();
 
-	void disabled();
+    void disabled();
 
-	void techtreeMaximumReached();
+    void techtreeMaximumReached();
 
-	void cooldownNotYetReady(float cooldownRemaining, float cooldown);
+    void cooldownNotYetReady(float cooldownRemaining, float cooldown);
 
-	void noChargesRemaining();
+    void noChargesRemaining();
 }

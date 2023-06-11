@@ -8,24 +8,24 @@ import com.etheller.interpreter.ast.scope.GlobalScope;
 import com.etheller.interpreter.ast.value.JassType;
 
 public class JassTypeVisitor extends JassBaseVisitor<JassType> {
-	private final GlobalScope globals;
+    private final GlobalScope globals;
 
-	public JassTypeVisitor(final GlobalScope globals) {
-		this.globals = globals;
-	}
+    public JassTypeVisitor(final GlobalScope globals) {
+        this.globals = globals;
+    }
 
-	@Override
-	public JassType visitArrayType(final ArrayTypeContext ctx) {
-		return globals.parseArrayType(ctx.ID().getText());
-	}
+    @Override
+    public JassType visitArrayType(final ArrayTypeContext ctx) {
+        return globals.parseArrayType(ctx.ID().getText());
+    }
 
-	@Override
-	public JassType visitBasicType(final BasicTypeContext ctx) {
-		return globals.parseType(ctx.ID().getText());
-	}
+    @Override
+    public JassType visitBasicType(final BasicTypeContext ctx) {
+        return globals.parseType(ctx.ID().getText());
+    }
 
-	@Override
-	public JassType visitNothingType(final NothingTypeContext ctx) {
-		return JassType.NOTHING;
-	}
+    @Override
+    public JassType visitNothingType(final NothingTypeContext ctx) {
+        return JassType.NOTHING;
+    }
 }

@@ -1,7 +1,5 @@
 package com.etheller.warsmash.viewer5.handlers.w3x.simulation.abilities.test;
 
-import java.util.EnumSet;
-
 import com.etheller.warsmash.util.War3ID;
 import com.etheller.warsmash.viewer5.handlers.w3x.simulation.CSimulation;
 import com.etheller.warsmash.viewer5.handlers.w3x.simulation.CUnit;
@@ -15,112 +13,112 @@ import com.etheller.warsmash.viewer5.handlers.w3x.simulation.orders.OrderIds;
 import com.etheller.warsmash.viewer5.handlers.w3x.simulation.util.AbilityActivationReceiver;
 import com.etheller.warsmash.viewer5.handlers.w3x.simulation.util.AbilityTargetCheckReceiver;
 
+import java.util.EnumSet;
+
 public class CAbilityCarrionSwarmDummy extends AbstractGenericSingleIconNoSmartActiveAbility {
 
-	private float castRange;
-	private EnumSet<CTargetType> targetsAllowed;
-	private CBehaviorCarrionSwarmDummy behaviorCarrionSwarmDummy;
+    private float castRange;
+    private EnumSet<CTargetType> targetsAllowed;
+    private CBehaviorCarrionSwarmDummy behaviorCarrionSwarmDummy;
 
-	public CAbilityCarrionSwarmDummy(final int handleId, final War3ID alias, final float castRange,
-			final EnumSet<CTargetType> targetsAllowed) {
-		super(handleId, alias);
-		this.castRange = castRange;
-		this.targetsAllowed = targetsAllowed;
-	}
+    public CAbilityCarrionSwarmDummy(final int handleId, final War3ID alias, final float castRange,
+                                     final EnumSet<CTargetType> targetsAllowed) {
+        super(handleId, alias);
+        this.castRange = castRange;
+        this.targetsAllowed = targetsAllowed;
+    }
 
-	@Override
-	public int getBaseOrderId() {
-		return OrderIds.carrionswarm;
-	}
+    @Override
+    public int getBaseOrderId() {
+        return OrderIds.carrionswarm;
+    }
 
-	@Override
-	public boolean isToggleOn() {
-		return false;
-	}
+    @Override
+    public boolean isToggleOn() {
+        return false;
+    }
 
-	@Override
-	public void onAdd(final CSimulation game, final CUnit unit) {
-		this.behaviorCarrionSwarmDummy = new CBehaviorCarrionSwarmDummy(unit, this);
-	}
+    @Override
+    public void onAdd(final CSimulation game, final CUnit unit) {
+        this.behaviorCarrionSwarmDummy = new CBehaviorCarrionSwarmDummy(unit, this);
+    }
 
-	@Override
-	public void onRemove(final CSimulation game, final CUnit unit) {
+    @Override
+    public void onRemove(final CSimulation game, final CUnit unit) {
 
-	}
+    }
 
-	@Override
-	public void onTick(final CSimulation game, final CUnit unit) {
+    @Override
+    public void onTick(final CSimulation game, final CUnit unit) {
 
-	}
+    }
 
-	@Override
-	public void onCancelFromQueue(final CSimulation game, final CUnit unit, final int orderId) {
+    @Override
+    public void onCancelFromQueue(final CSimulation game, final CUnit unit, final int orderId) {
 
-	}
+    }
 
-	@Override
-	public CBehavior begin(final CSimulation game, final CUnit caster, final int orderId, final CWidget target) {
-		return this.behaviorCarrionSwarmDummy.reset(target);
-	}
+    @Override
+    public CBehavior begin(final CSimulation game, final CUnit caster, final int orderId, final CWidget target) {
+        return this.behaviorCarrionSwarmDummy.reset(target);
+    }
 
-	@Override
-	public CBehavior begin(final CSimulation game, final CUnit caster, final int orderId,
-			final AbilityPointTarget point) {
-		return this.behaviorCarrionSwarmDummy.reset(point);
-	}
+    @Override
+    public CBehavior begin(final CSimulation game, final CUnit caster, final int orderId,
+                           final AbilityPointTarget point) {
+        return this.behaviorCarrionSwarmDummy.reset(point);
+    }
 
-	@Override
-	public CBehavior beginNoTarget(final CSimulation game, final CUnit caster, final int orderId) {
-		return caster.pollNextOrderBehavior(game);
-	}
+    @Override
+    public CBehavior beginNoTarget(final CSimulation game, final CUnit caster, final int orderId) {
+        return caster.pollNextOrderBehavior(game);
+    }
 
-	@Override
-	protected void innerCheckCanTarget(final CSimulation game, final CUnit unit, final int orderId,
-			final CWidget target, final AbilityTargetCheckReceiver<CWidget> receiver) {
-		if (unit.canReach(target, this.castRange) && target.canBeTargetedBy(game, unit, this.targetsAllowed)) {
-			receiver.targetOk(target);
-		}
-		else {
-			receiver.targetOutsideRange();
-		}
-	}
+    @Override
+    protected void innerCheckCanTarget(final CSimulation game, final CUnit unit, final int orderId,
+                                       final CWidget target, final AbilityTargetCheckReceiver<CWidget> receiver) {
+        if (unit.canReach(target, this.castRange) && target.canBeTargetedBy(game, unit, this.targetsAllowed)) {
+            receiver.targetOk(target);
+        } else {
+            receiver.targetOutsideRange();
+        }
+    }
 
-	@Override
-	protected void innerCheckCanTarget(final CSimulation game, final CUnit unit, final int orderId,
-			final AbilityPointTarget target, final AbilityTargetCheckReceiver<AbilityPointTarget> receiver) {
-		if (unit.canReach(target, this.castRange)) {
-			receiver.targetOk(target);
-		}
-		else {
-			receiver.targetOutsideRange();
-		}
-	}
+    @Override
+    protected void innerCheckCanTarget(final CSimulation game, final CUnit unit, final int orderId,
+                                       final AbilityPointTarget target, final AbilityTargetCheckReceiver<AbilityPointTarget> receiver) {
+        if (unit.canReach(target, this.castRange)) {
+            receiver.targetOk(target);
+        } else {
+            receiver.targetOutsideRange();
+        }
+    }
 
-	@Override
-	protected void innerCheckCanTargetNoTarget(final CSimulation game, final CUnit unit, final int orderId,
-			final AbilityTargetCheckReceiver<Void> receiver) {
-		receiver.orderIdNotAccepted();
-	}
+    @Override
+    protected void innerCheckCanTargetNoTarget(final CSimulation game, final CUnit unit, final int orderId,
+                                               final AbilityTargetCheckReceiver<Void> receiver) {
+        receiver.orderIdNotAccepted();
+    }
 
-	@Override
-	protected void innerCheckCanUse(final CSimulation game, final CUnit unit, final int orderId,
-			final AbilityActivationReceiver receiver) {
-		receiver.useOk();
-	}
+    @Override
+    protected void innerCheckCanUse(final CSimulation game, final CUnit unit, final int orderId,
+                                    final AbilityActivationReceiver receiver) {
+        receiver.useOk();
+    }
 
-	public float getCastRange() {
-		return this.castRange;
-	}
+    public float getCastRange() {
+        return this.castRange;
+    }
 
-	public EnumSet<CTargetType> getTargetsAllowed() {
-		return this.targetsAllowed;
-	}
+    public void setCastRange(final float castRange) {
+        this.castRange = castRange;
+    }
 
-	public void setCastRange(final float castRange) {
-		this.castRange = castRange;
-	}
+    public EnumSet<CTargetType> getTargetsAllowed() {
+        return this.targetsAllowed;
+    }
 
-	public void setTargetsAllowed(final EnumSet<CTargetType> targetsAllowed) {
-		this.targetsAllowed = targetsAllowed;
-	}
+    public void setTargetsAllowed(final EnumSet<CTargetType> targetsAllowed) {
+        this.targetsAllowed = targetsAllowed;
+    }
 }

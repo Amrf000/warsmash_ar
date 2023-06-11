@@ -3,7 +3,7 @@ package com.etheller.warsmash.datasources;
 import java.io.Serializable;
 
 public interface DataSourceDescriptor extends Serializable {
-	DataSource createDataSource();
+    DataSource createDataSource();
 
-	String getDisplayName();
+    String getDisplayName();
 }

@@ -1,9 +1,9 @@
 package net.warsmash.nio.channels;
 
-import java.net.SocketAddress;
-
 import net.warsmash.nio.channels.tcp.TCPClientParser;
 
+import java.net.SocketAddress;
+
 public interface SocketChannelCallback {
-	TCPClientParser onConnect(WritableOutput writableOpenedChannel, SocketAddress remoteAddress);
+    TCPClientParser onConnect(WritableOutput writableOpenedChannel, SocketAddress remoteAddress);
 }

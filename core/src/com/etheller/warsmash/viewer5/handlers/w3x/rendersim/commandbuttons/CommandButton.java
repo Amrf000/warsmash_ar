@@ -3,36 +3,36 @@ package com.etheller.warsmash.viewer5.handlers.w3x.rendersim.commandbuttons;
 import com.badlogic.gdx.graphics.Texture;
 
 public interface CommandButton {
-	String getToolTip();
+    String getToolTip();
 
-	String getUberTip();
+    String getUberTip();
 
-	int getLumberCost();
+    int getLumberCost();
 
-	int getGoldCost();
+    int getGoldCost();
 
-	int getManaCost();
+    int getManaCost();
 
-	int getFoodCost();
+    int getFoodCost();
 
-	Texture getIcon();
+    Texture getIcon();
 
-	Texture getDisabledIcon();
+    Texture getDisabledIcon();
 
-	boolean isEnabled();
+    boolean isEnabled();
 
-	float getCooldown();
+    float getCooldown();
 
-	float getCooldownRemaining();
+    float getCooldownRemaining();
 
-	boolean isAutoCastCapable();
+    boolean isAutoCastCapable();
 
-	boolean isAutoCastActive();
+    boolean isAutoCastActive();
 
-	int getButtonPositionX();
+    int getButtonPositionX();
 
-	int getButtonPositionY();
+    int getButtonPositionY();
 
-	int getOrderId();
+    int getOrderId();
 
 }

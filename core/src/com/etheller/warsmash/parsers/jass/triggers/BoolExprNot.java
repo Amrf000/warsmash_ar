@@ -5,15 +5,15 @@ import com.etheller.interpreter.ast.scope.TriggerExecutionScope;
 import com.etheller.interpreter.ast.scope.trigger.TriggerBooleanExpression;
 
 public class BoolExprNot implements TriggerBooleanExpression {
-	private final TriggerBooleanExpression operand;
+    private final TriggerBooleanExpression operand;
 
-	public BoolExprNot(final TriggerBooleanExpression operand) {
-		this.operand = operand;
-	}
+    public BoolExprNot(final TriggerBooleanExpression operand) {
+        this.operand = operand;
+    }
 
-	@Override
-	public boolean evaluate(final GlobalScope globalScope, final TriggerExecutionScope triggerScope) {
-		return this.operand.evaluate(globalScope, triggerScope);
-	}
+    @Override
+    public boolean evaluate(final GlobalScope globalScope, final TriggerExecutionScope triggerScope) {
+        return this.operand.evaluate(globalScope, triggerScope);
+    }
 
 }

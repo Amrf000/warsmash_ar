@@ -7,31 +7,31 @@ import com.etheller.warsmash.viewer5.handlers.w3x.simulation.abilities.AbstractC
 import com.etheller.warsmash.viewer5.handlers.w3x.simulation.abilities.targeting.AbilityTarget;
 
 public abstract class AbstractGenericAliasedAbility extends AbstractCAbility implements CLevelingAbility {
-	private final War3ID alias;
-	private int level = 1;
+    private final War3ID alias;
+    private int level = 1;
 
-	public AbstractGenericAliasedAbility(final int handleId, final War3ID alias) {
-		super(handleId);
-		this.alias = alias;
-	}
+    public AbstractGenericAliasedAbility(final int handleId, final War3ID alias) {
+        super(handleId);
+        this.alias = alias;
+    }
 
-	@Override
-	public boolean checkBeforeQueue(final CSimulation game, final CUnit caster, final int orderId,
-			final AbilityTarget target) {
-		return true;
-	}
+    @Override
+    public boolean checkBeforeQueue(final CSimulation game, final CUnit caster, final int orderId,
+                                    final AbilityTarget target) {
+        return true;
+    }
 
-	public War3ID getAlias() {
-		return this.alias;
-	}
+    public War3ID getAlias() {
+        return this.alias;
+    }
 
-	@Override
-	public final int getLevel() {
-		return this.level;
-	}
+    @Override
+    public final int getLevel() {
+        return this.level;
+    }
 
-	@Override
-	public void setLevel(final int level) {
-		this.level = level;
-	}
+    @Override
+    public void setLevel(final int level) {
+        this.level = level;
+    }
 }

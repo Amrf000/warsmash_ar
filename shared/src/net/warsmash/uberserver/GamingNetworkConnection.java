@@ -1,11 +1,11 @@
 package net.warsmash.uberserver;
 
 public interface GamingNetworkConnection extends GamingNetworkClientToServerListener {
-	void addListener(GamingNetworkServerToClientListener listener);
+    void addListener(GamingNetworkServerToClientListener listener);
 
-	void userRequestDisconnect();
+    void userRequestDisconnect();
 
-	boolean userRequestConnect();
+    boolean userRequestConnect();
 
-	String getGatewayString();
+    String getGatewayString();
 }

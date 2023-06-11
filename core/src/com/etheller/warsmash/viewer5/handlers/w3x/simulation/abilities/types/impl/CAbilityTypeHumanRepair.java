@@ -1,7 +1,5 @@
 package com.etheller.warsmash.viewer5.handlers.w3x.simulation.abilities.types.impl;
 
-import java.util.List;
-
 import com.etheller.warsmash.util.War3ID;
 import com.etheller.warsmash.viewer5.handlers.w3x.simulation.CSimulation;
 import com.etheller.warsmash.viewer5.handlers.w3x.simulation.abilities.CAbility;
@@ -9,35 +7,37 @@ import com.etheller.warsmash.viewer5.handlers.w3x.simulation.abilities.build.CAb
 import com.etheller.warsmash.viewer5.handlers.w3x.simulation.abilities.generic.CLevelingAbility;
 import com.etheller.warsmash.viewer5.handlers.w3x.simulation.abilities.types.CAbilityType;
 
+import java.util.List;
+
 public class CAbilityTypeHumanRepair extends CAbilityType<CAbilityTypeHumanRepairLevelData> {
 
-	public CAbilityTypeHumanRepair(final War3ID alias, final War3ID code,
-			final List<CAbilityTypeHumanRepairLevelData> levelData) {
-		super(alias, code, levelData);
-	}
+    public CAbilityTypeHumanRepair(final War3ID alias, final War3ID code,
+                                   final List<CAbilityTypeHumanRepairLevelData> levelData) {
+        super(alias, code, levelData);
+    }
 
-	@Override
-	public CAbility createAbility(final int handleId) {
-		final CAbilityTypeHumanRepairLevelData levelData = getLevelData(0);
-		return new CAbilityHumanRepair(handleId, getAlias(), levelData.getTargetsAllowed(),
-				levelData.getNavalRangeBonus(), levelData.getRepairCostRatio(), levelData.getRepairTimeRatio(),
-				levelData.getCastRange());
-	}
+    @Override
+    public CAbility createAbility(final int handleId) {
+        final CAbilityTypeHumanRepairLevelData levelData = getLevelData(0);
+        return new CAbilityHumanRepair(handleId, getAlias(), levelData.getTargetsAllowed(),
+                levelData.getNavalRangeBonus(), levelData.getRepairCostRatio(), levelData.getRepairTimeRatio(),
+                levelData.getCastRange());
+    }
 
-	@Override
-	public void setLevel(final CSimulation game, final CLevelingAbility existingAbility, final int level) {
+    @Override
+    public void setLevel(final CSimulation game, final CLevelingAbility existingAbility, final int level) {
 
-		final CAbilityTypeHumanRepairLevelData levelData = getLevelData(level - 1);
-		final CAbilityHumanRepair heroAbility = ((CAbilityHumanRepair) existingAbility);
+        final CAbilityTypeHumanRepairLevelData levelData = getLevelData(level - 1);
+        final CAbilityHumanRepair heroAbility = ((CAbilityHumanRepair) existingAbility);
 
-		heroAbility.setTargetsAllowed(levelData.getTargetsAllowed());
-		heroAbility.setNavalRangeBonus(levelData.getNavalRangeBonus());
-		heroAbility.setRepairCostRatio(levelData.getRepairCostRatio());
-		heroAbility.setRepairTimeRatio(levelData.getRepairTimeRatio());
-		heroAbility.setCastRange(levelData.getCastRange());
+        heroAbility.setTargetsAllowed(levelData.getTargetsAllowed());
+        heroAbility.setNavalRangeBonus(levelData.getNavalRangeBonus());
+        heroAbility.setRepairCostRatio(levelData.getRepairCostRatio());
+        heroAbility.setRepairTimeRatio(levelData.getRepairTimeRatio());
+        heroAbility.setCastRange(levelData.getCastRange());
 
-		heroAbility.setLevel(level);
+        heroAbility.setLevel(level);
 
-	}
+    }
 
 }

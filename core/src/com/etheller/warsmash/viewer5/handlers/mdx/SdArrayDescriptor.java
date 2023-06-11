@@ -1,24 +1,9 @@
 package com.etheller.warsmash.viewer5.handlers.mdx;
 
 public interface SdArrayDescriptor<TYPE> {
-	SdArrayDescriptor<Object> GENERIC = new SdArrayDescriptor<Object>() {
-		@Override
-		public Object[] create(final int size) {
-			return new Object[size];
-		}
-	};
-	SdArrayDescriptor<float[]> FLOAT_ARRAY = new SdArrayDescriptor<float[]>() {
-		@Override
-		public float[][] create(final int size) {
-			return new float[size][];
-		}
-	};
-	SdArrayDescriptor<long[]> LONG_ARRAY = new SdArrayDescriptor<long[]>() {
-		@Override
-		public long[][] create(final int size) {
-			return new long[size][];
-		}
-	};
+    SdArrayDescriptor<Object> GENERIC = Object[]::new;
+    SdArrayDescriptor<float[]> FLOAT_ARRAY = float[][]::new;
+    SdArrayDescriptor<long[]> LONG_ARRAY = long[][]::new;
 
-	TYPE[] create(int size);
+    TYPE[] create(int size);
 }

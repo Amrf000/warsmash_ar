@@ -8,16 +8,16 @@ import com.etheller.warsmash.viewer5.handlers.w3x.simulation.util.StringMsgAbili
 import com.etheller.warsmash.viewer5.handlers.w3x.simulation.util.StringMsgTargetCheckReceiver;
 
 public interface COrder {
-	int getAbilityHandleId();
+    StringMsgTargetCheckReceiver<?> targetCheckReceiver = new StringMsgTargetCheckReceiver<>();
+    StringMsgAbilityActivationReceiver abilityActivationReceiver = new StringMsgAbilityActivationReceiver();
 
-	int getOrderId();
+    int getAbilityHandleId();
 
-	CBehavior begin(final CSimulation game, CUnit caster);
+    int getOrderId();
 
-	AbilityTarget getTarget(CSimulation game);
+    CBehavior begin(final CSimulation game, CUnit caster);
 
-	boolean isQueued();
+    AbilityTarget getTarget(CSimulation game);
 
-	final StringMsgTargetCheckReceiver<?> targetCheckReceiver = new StringMsgTargetCheckReceiver<>();
-	final StringMsgAbilityActivationReceiver abilityActivationReceiver = new StringMsgAbilityActivationReceiver();
+    boolean isQueued();
 }

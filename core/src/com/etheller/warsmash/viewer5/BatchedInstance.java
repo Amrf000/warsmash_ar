@@ -5,12 +5,12 @@ package com.etheller.warsmash.viewer5;
  */
 public abstract class BatchedInstance extends ModelInstance {
 
-	public BatchedInstance(final Model model) {
-		super(model);
-	}
+    public BatchedInstance(final Model<?> model) {
+        super(model);
+    }
 
-	@Override
-	public boolean isBatched() {
-		return true;
-	}
+    @Override
+    public boolean isBatched() {
+        return true;
+    }
 }

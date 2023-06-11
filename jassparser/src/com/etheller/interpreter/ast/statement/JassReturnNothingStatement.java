@@ -7,12 +7,12 @@ import com.etheller.interpreter.ast.value.JassValue;
 import com.etheller.interpreter.ast.value.StringJassValue;
 
 public class JassReturnNothingStatement implements JassStatement {
-	public static final StringJassValue RETURN_NOTHING_NOTICE = new StringJassValue("nothing");
+    public static final StringJassValue RETURN_NOTHING_NOTICE = new StringJassValue("nothing");
 
-	@Override
-	public JassValue execute(final GlobalScope globalScope, final LocalScope localScope,
-			final TriggerExecutionScope triggerScope) {
-		return RETURN_NOTHING_NOTICE;
-	}
+    @Override
+    public JassValue execute(final GlobalScope globalScope, final LocalScope localScope,
+                             final TriggerExecutionScope triggerScope) {
+        return RETURN_NOTHING_NOTICE;
+    }
 
 }

@@ -4,24 +4,24 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import com.etheller.warsmash.parsers.fdf.GameUI;
 
 public interface ClickableActionFrame extends ClickableFrame {
-	@Override
-	void mouseDown(final GameUI gameUI, final Viewport uiViewport);
+    @Override
+    void mouseDown(final GameUI gameUI, final Viewport uiViewport);
 
-	@Override
-	void mouseUp(final GameUI gameUI, final Viewport uiViewport);
+    @Override
+    void mouseUp(final GameUI gameUI, final Viewport uiViewport);
 
-	@Override
-	void onClick(int button);
+    @Override
+    void onClick(int button);
 
-	String getToolTip();
+    String getToolTip();
 
-	String getUberTip();
+    String getUberTip();
 
-	int getToolTipGoldCost();
+    int getToolTipGoldCost();
 
-	int getToolTipLumberCost();
+    int getToolTipLumberCost();
 
-	int getToolTipFoodCost();
+    int getToolTipFoodCost();
 
-	int getToolTipManaCost();
+    int getToolTipManaCost();
 }

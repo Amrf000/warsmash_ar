@@ -1,11 +1,8 @@
 package com.etheller.warsmash.viewer5.handlers.w3x.simulation.util;
 
 public interface SimulationRenderComponent {
-	SimulationRenderComponent DO_NOTHING = new SimulationRenderComponent() {
-		@Override
-		public void remove() {
-		}
-	};
+    SimulationRenderComponent DO_NOTHING = () -> {
+    };
 
-	void remove();
+    void remove();
 }

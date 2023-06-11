@@ -7,216 +7,216 @@ import com.hiveworkshop.rms.util.BinaryReader;
 import com.hiveworkshop.rms.util.BinaryWriter;
 
 public class MdlxLight extends MdlxGenericObject {
-	public enum Type {
-		OMNIDIRECTIONAL("Omnidirectional"),
-		DIRECTIONAL("Directional"),
-		AMBIENT("Ambient");
+    public Type type = Type.OMNIDIRECTIONAL;
+    public float[] attenuation = new float[2];
+    public float[] color = new float[3];
+    public float intensity = 0;
+    public float[] ambientColor = new float[3];
+    public float ambientIntensity = 0;
 
-		String token;
+    public MdlxLight() {
+        super(0x200);
+    }
 
-		Type(final String token) {
-			this.token = token;
-		}
+    @Override
+    public void readMdx(final BinaryReader reader, final int version) {
+        final int position = reader.position();
+        final long size = reader.readUInt32();
 
-		public static Type fromId(final int id) {
-			return values()[id];
-		}
+        super.readMdx(reader, version);
 
-		@Override
-		public String toString() {
-			return this.token;
-		}
-	}
+        this.type = Type.fromId(reader.readInt32());
+        reader.readFloat32Array(this.attenuation);
+        reader.readFloat32Array(this.color);
+        this.intensity = reader.readFloat32();
+        reader.readFloat32Array(this.ambientColor);
+        this.ambientIntensity = reader.readFloat32();
 
-	public Type type = Type.OMNIDIRECTIONAL;
-	public float[] attenuation = new float[2];
-	public float[] color = new float[3];
-	public float intensity = 0;
-	public float[] ambientColor = new float[3];
-	public float ambientIntensity = 0;
+        readTimelines(reader, size - (reader.position() - position));
+    }
 
-	public MdlxLight() {
-		super(0x200);
-	}
+    @Override
+    public void writeMdx(final BinaryWriter writer, final int version) {
+        writer.writeUInt32(getByteLength(version));
 
-	@Override
-	public void readMdx(final BinaryReader reader, final int version) {
-		final int position = reader.position();
-		final long size = reader.readUInt32();
+        super.writeMdx(writer, version);
 
-		super.readMdx(reader, version);
+        writer.writeUInt32(this.type.ordinal());
+        writer.writeFloat32Array(this.attenuation);
+        writer.writeFloat32Array(this.color);
+        writer.writeFloat32(this.intensity);
+        writer.writeFloat32Array(this.ambientColor);
+        writer.writeFloat32(this.ambientIntensity);
 
-		this.type = Type.fromId(reader.readInt32());
-		reader.readFloat32Array(this.attenuation);
-		reader.readFloat32Array(this.color);
-		this.intensity = reader.readFloat32();
-		reader.readFloat32Array(this.ambientColor);
-		this.ambientIntensity = reader.readFloat32();
+        writeNonGenericAnimationChunks(writer);
+    }
 
-		readTimelines(reader, size - (reader.position() - position));
-	}
+    @Override
+    public void readMdl(final MdlTokenInputStream stream, final int version) {
+        for (final String token : super.readMdlGeneric(stream)) {
+            switch (token) {
+                case MdlUtils.TOKEN_OMNIDIRECTIONAL:
+                    this.type = Type.OMNIDIRECTIONAL;
+                    break;
+                case MdlUtils.TOKEN_DIRECTIONAL:
+                    this.type = Type.DIRECTIONAL;
+                    break;
+                case MdlUtils.TOKEN_AMBIENT:
+                    this.type = Type.AMBIENT;
+                    break;
+                case MdlUtils.TOKEN_STATIC_ATTENUATION_START:
+                    this.attenuation[0] = stream.readFloat();
+                    break;
+                case MdlUtils.TOKEN_ATTENUATION_START:
+                    readTimeline(stream, AnimationMap.KLAS);
+                    break;
+                case MdlUtils.TOKEN_STATIC_ATTENUATION_END:
+                    this.attenuation[1] = stream.readFloat();
+                    break;
+                case MdlUtils.TOKEN_ATTENUATION_END:
+                    readTimeline(stream, AnimationMap.KLAE);
+                    break;
+                case MdlUtils.TOKEN_STATIC_INTENSITY:
+                    this.intensity = stream.readFloat();
+                    break;
+                case MdlUtils.TOKEN_INTENSITY:
+                    readTimeline(stream, AnimationMap.KLAI);
+                    break;
+                case MdlUtils.TOKEN_STATIC_COLOR:
+                    stream.readColor(this.color);
+                    break;
+                case MdlUtils.TOKEN_COLOR:
+                    readTimeline(stream, AnimationMap.KLAC);
+                    break;
+                case MdlUtils.TOKEN_STATIC_AMB_INTENSITY:
+                    this.ambientIntensity = stream.readFloat();
+                    break;
+                case MdlUtils.TOKEN_AMB_INTENSITY:
+                    readTimeline(stream, AnimationMap.KLBI);
+                    break;
+                case MdlUtils.TOKEN_STATIC_AMB_COLOR:
+                    stream.readColor(this.ambientColor);
+                    break;
+                case MdlUtils.TOKEN_AMB_COLOR:
+                    readTimeline(stream, AnimationMap.KLBC);
+                    break;
+                case MdlUtils.TOKEN_VISIBILITY:
+                    readTimeline(stream, AnimationMap.KLAV);
+                    break;
+                default:
+                    throw new RuntimeException("Unknown token in Light: " + token);
+            }
+        }
+    }
 
-	@Override
-	public void writeMdx(final BinaryWriter writer, final int version) {
-		writer.writeUInt32(getByteLength(version));
+    @Override
+    public void writeMdl(final MdlTokenOutputStream stream, final int version) {
+        stream.startObjectBlock(MdlUtils.TOKEN_LIGHT, this.name);
+        writeGenericHeader(stream);
 
-		super.writeMdx(writer, version);
+        stream.writeFlag(this.type.toString());
 
-		writer.writeUInt32(this.type.ordinal());
-		writer.writeFloat32Array(this.attenuation);
-		writer.writeFloat32Array(this.color);
-		writer.writeFloat32(this.intensity);
-		writer.writeFloat32Array(this.ambientColor);
-		writer.writeFloat32(this.ambientIntensity);
+        if (!writeTimeline(stream, AnimationMap.KLAS)) {
+            stream.writeFloatAttrib(MdlUtils.TOKEN_STATIC_ATTENUATION_START, this.attenuation[0]);
+        }
 
-		writeNonGenericAnimationChunks(writer);
-	}
+        if (!writeTimeline(stream, AnimationMap.KLAE)) {
+            stream.writeFloatAttrib(MdlUtils.TOKEN_STATIC_ATTENUATION_END, this.attenuation[1]);
+        }
 
-	@Override
-	public void readMdl(final MdlTokenInputStream stream, final int version) {
-		for (final String token : super.readMdlGeneric(stream)) {
-			switch (token) {
-			case MdlUtils.TOKEN_OMNIDIRECTIONAL:
-				this.type = Type.OMNIDIRECTIONAL;
-				break;
-			case MdlUtils.TOKEN_DIRECTIONAL:
-				this.type = Type.DIRECTIONAL;
-				break;
-			case MdlUtils.TOKEN_AMBIENT:
-				this.type = Type.AMBIENT;
-				break;
-			case MdlUtils.TOKEN_STATIC_ATTENUATION_START:
-				this.attenuation[0] = stream.readFloat();
-				break;
-			case MdlUtils.TOKEN_ATTENUATION_START:
-				readTimeline(stream, AnimationMap.KLAS);
-				break;
-			case MdlUtils.TOKEN_STATIC_ATTENUATION_END:
-				this.attenuation[1] = stream.readFloat();
-				break;
-			case MdlUtils.TOKEN_ATTENUATION_END:
-				readTimeline(stream, AnimationMap.KLAE);
-				break;
-			case MdlUtils.TOKEN_STATIC_INTENSITY:
-				this.intensity = stream.readFloat();
-				break;
-			case MdlUtils.TOKEN_INTENSITY:
-				readTimeline(stream, AnimationMap.KLAI);
-				break;
-			case MdlUtils.TOKEN_STATIC_COLOR:
-				stream.readColor(this.color);
-				break;
-			case MdlUtils.TOKEN_COLOR:
-				readTimeline(stream, AnimationMap.KLAC);
-				break;
-			case MdlUtils.TOKEN_STATIC_AMB_INTENSITY:
-				this.ambientIntensity = stream.readFloat();
-				break;
-			case MdlUtils.TOKEN_AMB_INTENSITY:
-				readTimeline(stream, AnimationMap.KLBI);
-				break;
-			case MdlUtils.TOKEN_STATIC_AMB_COLOR:
-				stream.readColor(this.ambientColor);
-				break;
-			case MdlUtils.TOKEN_AMB_COLOR:
-				readTimeline(stream, AnimationMap.KLBC);
-				break;
-			case MdlUtils.TOKEN_VISIBILITY:
-				readTimeline(stream, AnimationMap.KLAV);
-				break;
-			default:
-				throw new RuntimeException("Unknown token in Light: " + token);
-			}
-		}
-	}
+        if (!writeTimeline(stream, AnimationMap.KLAI)) {
+            stream.writeFloatAttrib(MdlUtils.TOKEN_STATIC_INTENSITY, this.intensity);
+        }
 
-	@Override
-	public void writeMdl(final MdlTokenOutputStream stream, final int version) {
-		stream.startObjectBlock(MdlUtils.TOKEN_LIGHT, this.name);
-		writeGenericHeader(stream);
+        if (!writeTimeline(stream, AnimationMap.KLAC)) {
+            stream.writeColor(MdlUtils.TOKEN_STATIC_COLOR, this.color);
+        }
 
-		stream.writeFlag(this.type.toString());
+        if (!writeTimeline(stream, AnimationMap.KLBI)) {
+            stream.writeFloatAttrib(MdlUtils.TOKEN_STATIC_AMB_INTENSITY, this.ambientIntensity);
+        }
 
-		if (!writeTimeline(stream, AnimationMap.KLAS)) {
-			stream.writeFloatAttrib(MdlUtils.TOKEN_STATIC_ATTENUATION_START, this.attenuation[0]);
-		}
+        if (!writeTimeline(stream, AnimationMap.KLBC)) {
+            stream.writeColor(MdlUtils.TOKEN_STATIC_AMB_COLOR, this.ambientColor);
+        }
 
-		if (!writeTimeline(stream, AnimationMap.KLAE)) {
-			stream.writeFloatAttrib(MdlUtils.TOKEN_STATIC_ATTENUATION_END, this.attenuation[1]);
-		}
+        writeTimeline(stream, AnimationMap.KLAV);
 
-		if (!writeTimeline(stream, AnimationMap.KLAI)) {
-			stream.writeFloatAttrib(MdlUtils.TOKEN_STATIC_INTENSITY, this.intensity);
-		}
+        writeGenericTimelines(stream);
+        stream.endBlock();
+    }
 
-		if (!writeTimeline(stream, AnimationMap.KLAC)) {
-			stream.writeColor(MdlUtils.TOKEN_STATIC_COLOR, this.color);
-		}
+    @Override
+    public long getByteLength(final int version) {
+        return 48 + super.getByteLength(version);
+    }
 
-		if (!writeTimeline(stream, AnimationMap.KLBI)) {
-			stream.writeFloatAttrib(MdlUtils.TOKEN_STATIC_AMB_INTENSITY, this.ambientIntensity);
-		}
+    public Type getType() {
+        return this.type;
+    }
 
-		if (!writeTimeline(stream, AnimationMap.KLBC)) {
-			stream.writeColor(MdlUtils.TOKEN_STATIC_AMB_COLOR, this.ambientColor);
-		}
+    public void setType(final Type type) {
+        this.type = type;
+    }
 
-		writeTimeline(stream, AnimationMap.KLAV);
+    public float[] getAttenuation() {
+        return this.attenuation;
+    }
 
-		writeGenericTimelines(stream);
-		stream.endBlock();
-	}
+    public void setAttenuation(final float[] attenuation) {
+        this.attenuation = attenuation;
+    }
 
-	@Override
-	public long getByteLength(final int version) {
-		return 48 + super.getByteLength(version);
-	}
+    public float[] getColor() {
+        return this.color;
+    }
 
-	public Type getType() {
-		return this.type;
-	}
+    public void setColor(final float[] color) {
+        this.color = color;
+    }
 
-	public float[] getAttenuation() {
-		return this.attenuation;
-	}
+    public float getIntensity() {
+        return this.intensity;
+    }
 
-	public float[] getColor() {
-		return this.color;
-	}
+    public void setIntensity(final float intensity) {
+        this.intensity = intensity;
+    }
 
-	public float getIntensity() {
-		return this.intensity;
-	}
+    public float[] getAmbientColor() {
+        return this.ambientColor;
+    }
 
-	public float[] getAmbientColor() {
-		return this.ambientColor;
-	}
+    public void setAmbientColor(final float[] ambientColor) {
+        this.ambientColor = ambientColor;
+    }
 
-	public float getAmbientIntensity() {
-		return this.ambientIntensity;
-	}
+    public float getAmbientIntensity() {
+        return this.ambientIntensity;
+    }
 
-	public void setType(final Type type) {
-		this.type = type;
-	}
+    public void setAmbientIntensity(final float ambientIntensity) {
+        this.ambientIntensity = ambientIntensity;
+    }
 
-	public void setAttenuation(final float[] attenuation) {
-		this.attenuation = attenuation;
-	}
+    public enum Type {
+        OMNIDIRECTIONAL("Omnidirectional"),
+        DIRECTIONAL("Directional"),
+        AMBIENT("Ambient");
 
-	public void setColor(final float[] color) {
-		this.color = color;
-	}
+        final String token;
 
-	public void setIntensity(final float intensity) {
-		this.intensity = intensity;
-	}
+        Type(final String token) {
+            this.token = token;
+        }
 
-	public void setAmbientColor(final float[] ambientColor) {
-		this.ambientColor = ambientColor;
-	}
+        public static Type fromId(final int id) {
+            return values()[id];
+        }
 
-	public void setAmbientIntensity(final float ambientIntensity) {
-		this.ambientIntensity = ambientIntensity;
-	}
+        @Override
+        public String toString() {
+            return this.token;
+        }
+    }
 }

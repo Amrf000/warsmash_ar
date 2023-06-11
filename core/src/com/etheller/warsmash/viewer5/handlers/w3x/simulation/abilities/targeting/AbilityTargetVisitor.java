@@ -5,11 +5,11 @@ import com.etheller.warsmash.viewer5.handlers.w3x.simulation.CItem;
 import com.etheller.warsmash.viewer5.handlers.w3x.simulation.CUnit;
 
 public interface AbilityTargetVisitor<T> {
-	T accept(AbilityPointTarget target);
+    T accept(AbilityPointTarget target);
 
-	T accept(CUnit target);
+    T accept(CUnit target);
 
-	T accept(CDestructable target);
+    T accept(CDestructable target);
 
-	T accept(CItem target);
+    T accept(CItem target);
 }

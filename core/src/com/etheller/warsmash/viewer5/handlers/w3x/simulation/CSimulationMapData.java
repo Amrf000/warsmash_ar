@@ -6,5 +6,5 @@ package com.etheller.warsmash.viewer5.handlers.w3x.simulation;
  * going to be network sync'ed.
  */
 public interface CSimulationMapData {
-	short getTerrainPathing(float x, float y);
+    short getTerrainPathing(float x, float y);
 }

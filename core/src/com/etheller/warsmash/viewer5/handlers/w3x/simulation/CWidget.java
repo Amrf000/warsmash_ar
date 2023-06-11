@@ -1,10 +1,5 @@
 package com.etheller.warsmash.viewer5.handlers.w3x.simulation;
 
-import java.util.ArrayList;
-import java.util.EnumMap;
-import java.util.EnumSet;
-import java.util.List;
-
 import com.badlogic.gdx.math.Rectangle;
 import com.etheller.interpreter.ast.scope.GlobalScope;
 import com.etheller.interpreter.ast.scope.trigger.RemovableTriggerEvent;
@@ -17,125 +12,125 @@ import com.etheller.warsmash.viewer5.handlers.w3x.simulation.combat.CTargetType;
 import com.etheller.warsmash.viewer5.handlers.w3x.simulation.trigger.JassGameEventsWar3;
 import com.etheller.warsmash.viewer5.handlers.w3x.simulation.unit.CWidgetEvent;
 
+import java.util.ArrayList;
+import java.util.EnumMap;
+import java.util.EnumSet;
+import java.util.List;
+
 public abstract class CWidget implements AbilityTarget, CHandle {
-	protected static final Rectangle tempRect = new Rectangle();
-	private final int handleId;
-	private float x;
-	private float y;
-	protected float life;
-	private final EnumMap<JassGameEventsWar3, List<CWidgetEvent>> eventTypeToEvents = new EnumMap<>(
-			JassGameEventsWar3.class);
+    protected static final Rectangle tempRect = new Rectangle();
+    private final int handleId;
+    private final EnumMap<JassGameEventsWar3, List<CWidgetEvent>> eventTypeToEvents = new EnumMap<>(
+            JassGameEventsWar3.class);
+    protected float life;
+    private float x;
+    private float y;
 
-	public CWidget(final int handleId, final float x, final float y, final float life) {
-		this.handleId = handleId;
-		this.x = x;
-		this.y = y;
-		this.life = life;
-	}
+    public CWidget(final int handleId, final float x, final float y, final float life) {
+        this.handleId = handleId;
+        this.x = x;
+        this.y = y;
+        this.life = life;
+    }
 
-	@Override
-	public int getHandleId() {
-		return this.handleId;
-	}
+    @Override
+    public int getHandleId() {
+        return this.handleId;
+    }
 
-	@Override
-	public float getX() {
-		return this.x;
-	}
+    @Override
+    public float getX() {
+        return this.x;
+    }
 
-	@Override
-	public float getY() {
-		return this.y;
-	}
+    protected void setX(final float x) {
+        this.x = x;
+    }
 
-	public float getLife() {
-		return this.life;
-	}
+    @Override
+    public float getY() {
+        return this.y;
+    }
 
-	public abstract float getMaxLife();
+    protected void setY(final float y) {
+        this.y = y;
+    }
 
-	protected void setX(final float x) {
-		this.x = x;
-	}
+    public float getLife() {
+        return this.life;
+    }
 
-	protected void setY(final float y) {
-		this.y = y;
-	}
+    public abstract float getMaxLife();
 
-	public void setLife(final CSimulation simulation, final float life) {
-		this.life = life;
-	}
+    public void setLife(final CSimulation simulation, final float life) {
+        this.life = life;
+    }
 
-	public abstract void damage(final CSimulation simulation, final CUnit source, final CAttackType attackType,
-			final String weaponType, final float damage);
+    public abstract void damage(final CSimulation simulation, final CUnit source, final CAttackType attackType,
+                                final String weaponType, final float damage);
 
-	public abstract float getFlyHeight();
+    public abstract float getFlyHeight();
 
-	public abstract float getImpactZ();
+    public abstract float getImpactZ();
 
-	public abstract <T> T visit(CWidgetVisitor<T> visitor);
+    public abstract <T> T visit(CWidgetVisitor<T> visitor);
 
-	public boolean isDead() {
-		return this.life <= 0;
-	}
+    public boolean isDead() {
+        return this.life <= 0;
+    }
 
-	public abstract boolean canBeTargetedBy(CSimulation simulation, CUnit source,
-			final EnumSet<CTargetType> targetsAllowed);
+    public abstract boolean canBeTargetedBy(CSimulation simulation, CUnit source,
+                                            final EnumSet<CTargetType> targetsAllowed);
 
-	public double distanceSquaredNoCollision(final AbilityTarget target) {
-		return distanceSquaredNoCollision(target.getX(), target.getY());
-	}
+    public double distanceSquaredNoCollision(final AbilityTarget target) {
+        return distanceSquaredNoCollision(target.getX(), target.getY());
+    }
 
-	public double distanceSquaredNoCollision(final float targetX, final float targetY) {
-		final double dx = targetX - getX();
-		final double dy = targetY - getY();
-		return (dx * dx) + (dy * dy);
-	}
+    public double distanceSquaredNoCollision(final float targetX, final float targetY) {
+        final double dx = targetX - getX();
+        final double dy = targetY - getY();
+        return (dx * dx) + (dy * dy);
+    }
 
-	public abstract boolean isInvulnerable();
+    public abstract boolean isInvulnerable();
 
-	public void fireDeathEvents(final CSimulation simulation) {
-		fireEvents(CommonTriggerExecutionScope::widgetTriggerScope, JassGameEventsWar3.EVENT_WIDGET_DEATH);
-	}
+    public void fireDeathEvents(final CSimulation simulation) {
+        fireEvents(CommonTriggerExecutionScope::widgetTriggerScope);
+    }
 
-	private List<CWidgetEvent> getOrCreateEventList(final JassGameEventsWar3 eventType) {
-		List<CWidgetEvent> playerEvents = this.eventTypeToEvents.get(eventType);
-		if (playerEvents == null) {
-			playerEvents = new ArrayList<>();
-			this.eventTypeToEvents.put(eventType, playerEvents);
-		}
-		return playerEvents;
-	}
+    private List<CWidgetEvent> getOrCreateEventList(final JassGameEventsWar3 eventType) {
+        List<CWidgetEvent> playerEvents = this.eventTypeToEvents.computeIfAbsent(eventType, k -> new ArrayList<>());
+        return playerEvents;
+    }
 
-	protected List<CWidgetEvent> getEventList(final JassGameEventsWar3 eventType) {
-		return this.eventTypeToEvents.get(eventType);
-	}
+    protected List<CWidgetEvent> getEventList(final JassGameEventsWar3 eventType) {
+        return this.eventTypeToEvents.get(eventType);
+    }
 
-	public RemovableTriggerEvent addEvent(final GlobalScope globalScope, final Trigger whichTrigger,
-			final JassGameEventsWar3 eventType) {
-		final CWidgetEvent playerEvent = new CWidgetEvent(globalScope, this, whichTrigger, eventType, null);
-		getOrCreateEventList(eventType).add(playerEvent);
-		return playerEvent;
-	}
+    public RemovableTriggerEvent addEvent(final GlobalScope globalScope, final Trigger whichTrigger,
+                                          final JassGameEventsWar3 eventType) {
+        final CWidgetEvent playerEvent = new CWidgetEvent(globalScope, this, whichTrigger, eventType, null);
+        getOrCreateEventList(eventType).add(playerEvent);
+        return playerEvent;
+    }
 
-	public void removeEvent(final CWidgetEvent playerEvent) {
-		final List<CWidgetEvent> eventList = getEventList(playerEvent.getEventType());
-		if (eventList != null) {
-			eventList.remove(playerEvent);
-		}
-	}
+    public void removeEvent(final CWidgetEvent playerEvent) {
+        final List<CWidgetEvent> eventList = getEventList(playerEvent.getEventType());
+        if (eventList != null) {
+            eventList.remove(playerEvent);
+        }
+    }
 
-	private void fireEvents(final CommonTriggerExecutionScope.WidgetEventScopeBuilder eventScopeBuilder,
-			final JassGameEventsWar3 eventType) {
-		final List<CWidgetEvent> eventList = getEventList(eventType);
-		if (eventList != null) {
-			for (final CWidgetEvent event : eventList) {
-				event.fire(this, eventScopeBuilder.create(eventType, event.getTrigger(), this));
-			}
-		}
-	}
+    private void fireEvents(final CommonTriggerExecutionScope.WidgetEventScopeBuilder eventScopeBuilder) {
+        final List<CWidgetEvent> eventList = getEventList(JassGameEventsWar3.EVENT_WIDGET_DEATH);
+        if (eventList != null) {
+            for (final CWidgetEvent event : eventList) {
+                event.fire(this, eventScopeBuilder.create(JassGameEventsWar3.EVENT_WIDGET_DEATH, event.getTrigger(), this));
+            }
+        }
+    }
 
-	public RemovableTriggerEvent addDeathEvent(final GlobalScope globalScope, final Trigger whichTrigger) {
-		return addEvent(globalScope, whichTrigger, JassGameEventsWar3.EVENT_WIDGET_DEATH);
-	}
+    public RemovableTriggerEvent addDeathEvent(final GlobalScope globalScope, final Trigger whichTrigger) {
+        return addEvent(globalScope, whichTrigger, JassGameEventsWar3.EVENT_WIDGET_DEATH);
+    }
 }

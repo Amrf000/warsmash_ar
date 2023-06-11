@@ -7,20 +7,20 @@ import com.etheller.interpreter.ast.scope.TriggerExecutionScope;
 import com.etheller.interpreter.ast.value.JassValue;
 
 public class JassReturnStatement implements JassStatement {
-	private final JassExpression expression;
+    private final JassExpression expression;
 
-	public JassReturnStatement(final JassExpression expression) {
-		this.expression = expression;
-	}
+    public JassReturnStatement(final JassExpression expression) {
+        this.expression = expression;
+    }
 
-	@Override
-	public JassValue execute(final GlobalScope globalScope, final LocalScope localScope,
-			final TriggerExecutionScope triggerScope) {
-		final JassValue returnVal = this.expression.evaluate(globalScope, localScope, triggerScope);
-		if (returnVal == null) {
-			return JassReturnNothingStatement.RETURN_NOTHING_NOTICE;
-		}
-		return returnVal;
-	}
+    @Override
+    public JassValue execute(final GlobalScope globalScope, final LocalScope localScope,
+                             final TriggerExecutionScope triggerScope) {
+        final JassValue returnVal = this.expression.evaluate(globalScope, localScope, triggerScope);
+        if (returnVal == null) {
+            return JassReturnNothingStatement.RETURN_NOTHING_NOTICE;
+        }
+        return returnVal;
+    }
 
 }

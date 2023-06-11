@@ -1,41 +1,26 @@
 package com.etheller.warsmash.networking;
 
 public interface GameTurnManager {
-	int getLatestCompletedTurn();
+    GameTurnManager PAUSED = new GameTurnManager() {
+        @Override
+        public int getLatestCompletedTurn() {
+            return Integer.MIN_VALUE;
+        }
 
-	void turnCompleted(int gameTurnTick);
+        @Override
+        public void turnCompleted(final int gameTurnTick) {
+            System.err.println("got turnCompleted(" + gameTurnTick + ") while paused !!");
+        }
 
-	void framesSkipped(float skippedCount);
+        @Override
+        public void framesSkipped(final float skippedCount) {
+        }
+    };
 
-	GameTurnManager PAUSED = new GameTurnManager() {
-		@Override
-		public int getLatestCompletedTurn() {
-			return Integer.MIN_VALUE;
-		}
+    int getLatestCompletedTurn();
 
-		@Override
-		public void turnCompleted(final int gameTurnTick) {
-			System.err.println("got turnCompleted(" + gameTurnTick + ") while paused !!");
-		}
+    void turnCompleted(int gameTurnTick);
 
-		@Override
-		public void framesSkipped(final float skippedCount) {
-		}
-	};
-
-	GameTurnManager LOCAL = new GameTurnManager() {
-		@Override
-		public int getLatestCompletedTurn() {
-			return Integer.MAX_VALUE;
-		}
-
-		@Override
-		public void turnCompleted(final int gameTurnTick) {
-		}
-
-		@Override
-		public void framesSkipped(final float skippedCount) {
-		}
-	};
+    void framesSkipped(float skippedCount);
 
 }

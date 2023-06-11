@@ -3,15 +3,15 @@ package com.etheller.warsmash.viewer5.handlers.w3x.simulation.abilities.generic;
 import com.etheller.warsmash.util.War3ID;
 
 public interface GenericSingleIconActiveAbility extends CLevelingAbility {
-	War3ID getAlias();
+    War3ID getAlias();
 
-	int getBaseOrderId();
+    int getBaseOrderId();
 
-	boolean isToggleOn();
+    boolean isToggleOn();
 
-	int getUIGoldCost();
+    int getUIGoldCost();
 
-	int getUILumberCost();
+    int getUILumberCost();
 
-	int getUIManaCost();
+    int getUIManaCost();
 }

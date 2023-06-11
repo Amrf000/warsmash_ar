@@ -1,18 +1,5 @@
 package com.etheller.warsmash.parsers.w3x;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.ByteBuffer;
-import java.nio.channels.SeekableByteChannel;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.zip.Checksum;
-
-import org.apache.commons.compress.utils.IOUtils;
-import org.apache.commons.compress.utils.SeekableInMemoryByteChannel;
-
 import com.etheller.warsmash.datasources.CompoundDataSource;
 import com.etheller.warsmash.datasources.DataSource;
 import com.etheller.warsmash.datasources.MpqDataSource;
@@ -24,179 +11,178 @@ import com.etheller.warsmash.parsers.w3x.w3i.War3MapW3i;
 import com.etheller.warsmash.parsers.w3x.wpm.War3MapWpm;
 import com.etheller.warsmash.units.custom.WTS;
 import com.google.common.io.LittleEndianDataInputStream;
-
 import mpq.MPQArchive;
 import mpq.MPQException;
+import org.apache.commons.compress.utils.IOUtils;
+import org.apache.commons.compress.utils.SeekableInMemoryByteChannel;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.ByteBuffer;
+import java.nio.channels.SeekableByteChannel;
+import java.nio.file.Files;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.zip.Checksum;
 
 /**
  * Warcraft 3 map (W3X and W3M).
  */
 public class War3Map implements DataSource {
 
-	private CompoundDataSource dataSource;
-	private MpqDataSource internalMpqContentsDataSource;
+    private final CompoundDataSource dataSource;
+    private final MpqDataSource internalMpqContentsDataSource;
 
-	public War3Map(final DataSource dataSource, final String mapFileName) {
-		try {
-			// Slightly complex. Here's the theory:
-			// 1.) Copy map into RAM
-			// 2.) Setup a Data Source that will read assets
-			// from either the map or the game, giving the map priority.
-			SeekableByteChannel sbc;
-			try (InputStream mapStream = dataSource.getResourceAsStream(mapFileName)) {
-				final byte[] mapData = IOUtils.toByteArray(mapStream);
-				sbc = new SeekableInMemoryByteChannel(mapData);
-				this.internalMpqContentsDataSource = new MpqDataSource(new MPQArchive(sbc), sbc);
-				this.dataSource = new CompoundDataSource(Arrays.asList(dataSource, this.internalMpqContentsDataSource));
-			}
-		}
-		catch (final IOException e) {
-			throw new RuntimeException(e);
-		}
-		catch (final MPQException e) {
-			throw new RuntimeException(e);
-		}
-	}
+    public War3Map(final DataSource dataSource, final String mapFileName) {
+        try {
+            // Slightly complex. Here's the theory:
+            // 1.) Copy map into RAM
+            // 2.) Setup a Data Source that will read assets
+            // from either the map or the game, giving the map priority.
+            SeekableByteChannel sbc;
+            try (InputStream mapStream = dataSource.getResourceAsStream(mapFileName)) {
+                final byte[] mapData = IOUtils.toByteArray(mapStream);
+                sbc = new SeekableInMemoryByteChannel(mapData);
+                this.internalMpqContentsDataSource = new MpqDataSource(new MPQArchive(sbc), sbc);
+                this.dataSource = new CompoundDataSource(Arrays.asList(dataSource, this.internalMpqContentsDataSource));
+            }
+        } catch (final IOException | MPQException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
-	public War3Map(final DataSource dataSource, final File mapFileName) {
-		try {
-			// Slightly complex. Here's the theory:
-			// 1.) Copy map into RAM
-			// 2.) Setup a Data Source that will read assets
-			// from either the map or the game, giving the map priority.
-			SeekableByteChannel sbc;
-			try (InputStream mapStream = new FileInputStream(mapFileName)) {
-				final byte[] mapData = IOUtils.toByteArray(mapStream);
-				sbc = new SeekableInMemoryByteChannel(mapData);
-				this.internalMpqContentsDataSource = new MpqDataSource(new MPQArchive(sbc), sbc);
-				this.dataSource = new CompoundDataSource(Arrays.asList(dataSource, this.internalMpqContentsDataSource));
-			}
-		}
-		catch (final IOException e) {
-			throw new RuntimeException(e);
-		}
-		catch (final MPQException e) {
-			throw new RuntimeException(e);
-		}
-	}
+    public War3Map(final DataSource dataSource, final File mapFileName) {
+        try {
+            // Slightly complex. Here's the theory:
+            // 1.) Copy map into RAM
+            // 2.) Setup a Data Source that will read assets
+            // from either the map or the game, giving the map priority.
+            SeekableByteChannel sbc;
+            try (InputStream mapStream = Files.newInputStream(mapFileName.toPath())) {
+                final byte[] mapData = IOUtils.toByteArray(mapStream);
+                sbc = new SeekableInMemoryByteChannel(mapData);
+                this.internalMpqContentsDataSource = new MpqDataSource(new MPQArchive(sbc), sbc);
+                this.dataSource = new CompoundDataSource(Arrays.asList(dataSource, this.internalMpqContentsDataSource));
+            }
+        } catch (final IOException | MPQException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
-	public MpqDataSource getInternalMpqContentsDataSource() {
-		return this.internalMpqContentsDataSource;
-	}
+    public MpqDataSource getInternalMpqContentsDataSource() {
+        return this.internalMpqContentsDataSource;
+    }
 
-	public War3MapW3i readMapInformation() throws IOException {
-		War3MapW3i mapInfo;
-		try (LittleEndianDataInputStream stream = new LittleEndianDataInputStream(
-				this.dataSource.getResourceAsStream("war3map.w3i"))) {
-			mapInfo = new War3MapW3i(stream);
-		}
-		return mapInfo;
-	}
+    public War3MapW3i readMapInformation() throws IOException {
+        War3MapW3i mapInfo;
+        try (LittleEndianDataInputStream stream = new LittleEndianDataInputStream(
+                this.dataSource.getResourceAsStream("war3map.w3i"))) {
+            mapInfo = new War3MapW3i(stream);
+        }
+        return mapInfo;
+    }
 
-	public War3MapW3e readEnvironment() throws IOException {
-		War3MapW3e environment;
-		try (LittleEndianDataInputStream stream = new LittleEndianDataInputStream(
-				this.dataSource.getResourceAsStream("war3map.w3e"))) {
-			environment = new War3MapW3e(stream);
-		}
-		return environment;
-	}
+    public War3MapW3e readEnvironment() throws IOException {
+        War3MapW3e environment;
+        try (LittleEndianDataInputStream stream = new LittleEndianDataInputStream(
+                this.dataSource.getResourceAsStream("war3map.w3e"))) {
+            environment = new War3MapW3e(stream);
+        }
+        return environment;
+    }
 
-	public War3MapWpm readPathing() throws IOException {
-		War3MapWpm pathingMap;
-		try (LittleEndianDataInputStream stream = new LittleEndianDataInputStream(
-				this.dataSource.getResourceAsStream("war3map.wpm"))) {
-			pathingMap = new War3MapWpm(stream);
-		}
-		return pathingMap;
-	}
+    public War3MapWpm readPathing() throws IOException {
+        War3MapWpm pathingMap;
+        try (LittleEndianDataInputStream stream = new LittleEndianDataInputStream(
+                this.dataSource.getResourceAsStream("war3map.wpm"))) {
+            pathingMap = new War3MapWpm(stream);
+        }
+        return pathingMap;
+    }
 
-	public War3MapDoo readDoodads(final War3MapW3i war3MapW3i) throws IOException {
-		War3MapDoo doodadsFile;
-		try (LittleEndianDataInputStream stream = new LittleEndianDataInputStream(
-				this.dataSource.getResourceAsStream("war3map.doo"))) {
-			doodadsFile = new War3MapDoo(stream, war3MapW3i);
-		}
-		return doodadsFile;
-	}
+    public War3MapDoo readDoodads(final War3MapW3i war3MapW3i) throws IOException {
+        War3MapDoo doodadsFile;
+        try (LittleEndianDataInputStream stream = new LittleEndianDataInputStream(
+                this.dataSource.getResourceAsStream("war3map.doo"))) {
+            doodadsFile = new War3MapDoo(stream, war3MapW3i);
+        }
+        return doodadsFile;
+    }
 
-	public War3MapUnitsDoo readUnits(final War3MapW3i war3MapW3i) throws IOException {
-		War3MapUnitsDoo unitsFile;
-		try (LittleEndianDataInputStream stream = new LittleEndianDataInputStream(
-				this.dataSource.getResourceAsStream("war3mapUnits.doo"))) {
-			unitsFile = new War3MapUnitsDoo(stream, war3MapW3i);
-		}
-		return unitsFile;
-	}
+    public War3MapUnitsDoo readUnits(final War3MapW3i war3MapW3i) throws IOException {
+        War3MapUnitsDoo unitsFile;
+        try (LittleEndianDataInputStream stream = new LittleEndianDataInputStream(
+                this.dataSource.getResourceAsStream("war3mapUnits.doo"))) {
+            unitsFile = new War3MapUnitsDoo(stream, war3MapW3i);
+        }
+        return unitsFile;
+    }
 
-	public Warcraft3MapObjectData readModifications() throws IOException {
-		final Warcraft3MapObjectData changes = Warcraft3MapObjectData.load(this.dataSource, true);
-		return changes;
-	}
+    public Warcraft3MapObjectData readModifications() throws IOException {
+        return Warcraft3MapObjectData.load(this.dataSource, true);
+    }
 
-	public Warcraft3MapObjectData readModifications(final WTS preloadedWTS) throws IOException {
-		final Warcraft3MapObjectData changes = Warcraft3MapObjectData.load(this.dataSource, true, preloadedWTS);
-		return changes;
-	}
+    public Warcraft3MapObjectData readModifications(final WTS preloadedWTS) throws IOException {
+        return Warcraft3MapObjectData.load(this.dataSource, true, preloadedWTS);
+    }
 
-	@Override
-	public InputStream getResourceAsStream(final String filepath) throws IOException {
-		return this.dataSource.getResourceAsStream(filepath);
-	}
+    @Override
+    public InputStream getResourceAsStream(final String filepath) {
+        return this.dataSource.getResourceAsStream(filepath);
+    }
 
-	@Override
-	public File getFile(final String filepath) throws IOException {
-		return this.dataSource.getFile(filepath);
-	}
+    @Override
+    public File getFile(final String filepath) {
+        return this.dataSource.getFile(filepath);
+    }
 
-	@Override
-	public File getDirectory(String filepath) throws IOException {
-		return this.dataSource.getDirectory(filepath);
-	}
+    @Override
+    public File getDirectory(String filepath) {
+        return this.dataSource.getDirectory(filepath);
+    }
 
-	@Override
-	public boolean has(final String filepath) {
-		return this.dataSource.has(filepath);
-	}
+    @Override
+    public boolean has(final String filepath) {
+        return this.dataSource.has(filepath);
+    }
 
-	@Override
-	public ByteBuffer read(final String path) throws IOException {
-		return this.dataSource.read(path);
-	}
+    @Override
+    public ByteBuffer read(final String path) {
+        return this.dataSource.read(path);
+    }
 
-	@Override
-	public Collection<String> getListfile() {
-		return this.internalMpqContentsDataSource.getListfile();
-	}
+    @Override
+    public Collection<String> getListfile() {
+        return this.internalMpqContentsDataSource.getListfile();
+    }
 
-	@Override
-	public void close() throws IOException {
-		this.dataSource.close();
-	}
+    @Override
+    public void close() throws IOException {
+        this.dataSource.close();
+    }
 
-	public CompoundDataSource getCompoundDataSource() {
-		return this.dataSource;
-	}
+    public CompoundDataSource getCompoundDataSource() {
+        return this.dataSource;
+    }
 
-	public long computeChecksum(Checksum checksum) {
-		final SeekableByteChannel inputChannel = this.internalMpqContentsDataSource.getInputChannel();
-		try {
-			final ByteBuffer byteBuffer = ByteBuffer.allocate(8 * 1024);
-			inputChannel.position(0);
-			int result;
-			byteBuffer.clear();
-			checksum.reset();
-			while ((result = inputChannel.read(byteBuffer)) != -1) {
-				byteBuffer.flip();
-				byte[] arr = new byte[byteBuffer.remaining()];
-				byteBuffer.get(arr);
-				checksum.update(arr,0, arr.length);//byte[] b, int off, int len
-				byteBuffer.clear();
-			}
-			return checksum.getValue();
-		}
-		catch (final IOException e) {
-			throw new IllegalStateException(e);
-		}
-	}
+    public long computeChecksum(Checksum checksum) {
+        final SeekableByteChannel inputChannel = this.internalMpqContentsDataSource.getInputChannel();
+        try {
+            final ByteBuffer byteBuffer = ByteBuffer.allocate(8 * 1024);
+            inputChannel.position(0);
+            byteBuffer.clear();
+            checksum.reset();
+            while (inputChannel.read(byteBuffer) != -1) {
+                byteBuffer.flip();
+                byte[] arr = new byte[byteBuffer.remaining()];
+                byteBuffer.get(arr);
+                checksum.update(arr, 0, arr.length);//byte[] b, int off, int len
+                byteBuffer.clear();
+            }
+            return checksum.getValue();
+        } catch (final IOException e) {
+            throw new IllegalStateException(e);
+        }
+    }
 }

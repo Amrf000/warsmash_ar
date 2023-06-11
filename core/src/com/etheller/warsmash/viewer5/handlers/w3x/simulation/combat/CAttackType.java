@@ -3,51 +3,50 @@ package com.etheller.warsmash.viewer5.handlers.w3x.simulation.combat;
 import com.etheller.interpreter.ast.util.CHandle;
 
 public enum CAttackType implements CodeKeyType, CHandle {
-	UNKNOWN,
-	NORMAL,
-	PIERCE,
-	SIEGE,
-	SPELLS,
-	CHAOS,
-	MAGIC,
-	HERO;
+    UNKNOWN,
+    NORMAL,
+    PIERCE,
+    SIEGE,
+    SPELLS,
+    CHAOS,
+    MAGIC,
+    HERO;
 
-	public static CAttackType[] VALUES = values();
+    public static final CAttackType[] VALUES = values();
 
-	private String codeKey;
-	private String damageKey;
+    private final String codeKey;
+    private final String damageKey;
 
-	private CAttackType() {
-		final String name = name();
-		final String computedCodeKey = name.charAt(0) + name.substring(1).toLowerCase();
-		if (computedCodeKey.equals("Spells")) {
-			this.codeKey = "Magic";
-		}
-		else {
-			this.codeKey = computedCodeKey;
-		}
-		this.damageKey = this.codeKey;
-	}
+    CAttackType() {
+        final String name = name();
+        final String computedCodeKey = name.charAt(0) + name.substring(1).toLowerCase();
+        if (computedCodeKey.equals("Spells")) {
+            this.codeKey = "Magic";
+        } else {
+            this.codeKey = computedCodeKey;
+        }
+        this.damageKey = this.codeKey;
+    }
 
-	@Override
-	public String getCodeKey() {
-		return this.codeKey;
-	}
+    public static CAttackType parseAttackType(final String attackTypeString) {
+        final String upperCaseAttackType = attackTypeString.toUpperCase();
+        if ("SEIGE".equals(upperCaseAttackType)) {
+            return SIEGE;
+        }
+        return valueOf(upperCaseAttackType);
+    }
 
-	public String getDamageKey() {
-		return this.damageKey;
-	}
+    @Override
+    public String getCodeKey() {
+        return this.codeKey;
+    }
 
-	public static CAttackType parseAttackType(final String attackTypeString) {
-		final String upperCaseAttackType = attackTypeString.toUpperCase();
-		if ("SEIGE".equals(upperCaseAttackType)) {
-			return SIEGE;
-		}
-		return valueOf(upperCaseAttackType);
-	}
+    public String getDamageKey() {
+        return this.damageKey;
+    }
 
-	@Override
-	public int getHandleId() {
-		return ordinal();
-	}
+    @Override
+    public int getHandleId() {
+        return ordinal();
+    }
 }

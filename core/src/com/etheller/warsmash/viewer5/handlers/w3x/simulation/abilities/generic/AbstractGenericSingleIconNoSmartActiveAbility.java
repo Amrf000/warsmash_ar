@@ -9,20 +9,20 @@ import com.etheller.warsmash.viewer5.handlers.w3x.simulation.util.AbilityTargetC
 
 public abstract class AbstractGenericSingleIconNoSmartActiveAbility extends AbstractGenericSingleIconActiveAbility {
 
-	public AbstractGenericSingleIconNoSmartActiveAbility(final int handleId, final War3ID alias) {
-		super(handleId, alias);
-	}
+    public AbstractGenericSingleIconNoSmartActiveAbility(final int handleId, final War3ID alias) {
+        super(handleId, alias);
+    }
 
-	@Override
-	protected void innerCheckCanSmartTarget(final CSimulation game, final CUnit unit, final int orderId,
-			final AbilityPointTarget target, final AbilityTargetCheckReceiver<AbilityPointTarget> receiver) {
-		receiver.orderIdNotAccepted();
-	}
+    @Override
+    protected void innerCheckCanSmartTarget(final CSimulation game, final CUnit unit, final int orderId,
+                                            final AbilityPointTarget target, final AbilityTargetCheckReceiver<AbilityPointTarget> receiver) {
+        receiver.orderIdNotAccepted();
+    }
 
-	@Override
-	protected void innerCheckCanSmartTarget(final CSimulation game, final CUnit unit, final int orderId,
-			final CWidget target, final AbilityTargetCheckReceiver<CWidget> receiver) {
-		receiver.orderIdNotAccepted();
-	}
+    @Override
+    protected void innerCheckCanSmartTarget(final CSimulation game, final CUnit unit, final int orderId,
+                                            final CWidget target, final AbilityTargetCheckReceiver<CWidget> receiver) {
+        receiver.orderIdNotAccepted();
+    }
 
 }

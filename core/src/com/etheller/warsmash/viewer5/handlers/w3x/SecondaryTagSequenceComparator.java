@@ -11,6 +11,16 @@ public class SecondaryTagSequenceComparator implements Comparator<IndexedSequenc
         this.standSequenceComparator = standSequenceComparator;
     }
 
+    public static int getTagsOrdinal(EnumSet<AnimationTokens.SecondaryTag> secondaryTagsA, EnumSet<AnimationTokens.SecondaryTag> ignoredTags) {
+        int secondaryTagsBOrdinal = Integer.MAX_VALUE;
+        for (AnimationTokens.SecondaryTag secondaryTag : secondaryTagsA) {
+            if (secondaryTag.ordinal() < secondaryTagsBOrdinal && !ignoredTags.contains(secondaryTag)) {
+                secondaryTagsBOrdinal = secondaryTag.ordinal();
+            }
+        }
+        return secondaryTagsBOrdinal;
+    }
+
     public SecondaryTagSequenceComparator reset(EnumSet<AnimationTokens.SecondaryTag> ignoredTags) {
         this.ignoredTags = ignoredTags;
         return this;
@@ -26,16 +36,6 @@ public class SecondaryTagSequenceComparator implements Comparator<IndexedSequenc
             return secondaryTagsBOrdinal - secondaryTagsAOrdinal;
         }
         return standSequenceComparator.compare(a, b);
-    }
-
-    public static int getTagsOrdinal(EnumSet<AnimationTokens.SecondaryTag> secondaryTagsA, EnumSet<AnimationTokens.SecondaryTag> ignoredTags) {
-        int secondaryTagsBOrdinal = Integer.MAX_VALUE;
-        for (AnimationTokens.SecondaryTag secondaryTag : secondaryTagsA) {
-            if (secondaryTag.ordinal() < secondaryTagsBOrdinal && !ignoredTags.contains(secondaryTag)) {
-                secondaryTagsBOrdinal = secondaryTag.ordinal();
-            }
-        }
-        return secondaryTagsBOrdinal;
     }
 
 }

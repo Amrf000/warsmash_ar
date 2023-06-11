@@ -7,7 +7,7 @@ buildscript {
         mavenCentral()
         gradlePluginPortal()
         maven {
-            //allowInsecureProtocol = true
+            allowInsecureProtocol = true
             url "http://maven.aliyun.com/nexus/content/groups/public/"
         }
 //        maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
@@ -34,7 +34,7 @@ allprojects {
         google()
         gradlePluginPortal()
         maven {
-            // allowInsecureProtocol = true
+            allowInsecureProtocol = true
             url "http://maven.aliyun.com/nexus/content/groups/public/"
         }
 //        maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }

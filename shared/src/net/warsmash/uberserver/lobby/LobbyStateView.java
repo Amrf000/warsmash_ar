@@ -1,5 +1,5 @@
 package net.warsmash.uberserver.lobby;
 
 public interface LobbyStateView {
-	void getSnapshot(LobbyListener lobbyListener);
+    void getSnapshot(LobbyListener lobbyListener);
 }

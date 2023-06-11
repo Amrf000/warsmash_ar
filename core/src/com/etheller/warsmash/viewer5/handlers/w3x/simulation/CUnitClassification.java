@@ -11,57 +11,58 @@ import java.util.Map;
  * is consistent with the World Editor naming: "Stats - Unit Classification".
  */
 public enum CUnitClassification {
-	GIANT("giant", "GiantClass"),
-	UNDEAD("undead", "UndeadClass"),
-	SUMMONED("summoned"),
-	MECHANICAL("mechanical", "MechanicalClass"),
-	PEON("peon"),
-	SAPPER("sapper"),
-	TOWNHALL("townhall"),
-	TREE("tree"),
-	WARD("ward"),
-	ANCIENT("ancient"),
-	STANDON("standon"),
-	NEURAL("neutral"),
-	TAUREN("tauren", "TaurenClass");
-	private static final Map<String, CUnitClassification> UNIT_EDITOR_KEY_TO_CLASSIFICATION = new HashMap<>();
-	static {
-		for (final CUnitClassification unitClassification : values()) {
-			UNIT_EDITOR_KEY_TO_CLASSIFICATION.put(unitClassification.getUnitDataKey(), unitClassification);
-		}
-	}
+    GIANT("giant", "GiantClass"),
+    UNDEAD("undead", "UndeadClass"),
+    SUMMONED("summoned"),
+    MECHANICAL("mechanical", "MechanicalClass"),
+    PEON("peon"),
+    SAPPER("sapper"),
+    TOWNHALL("townhall"),
+    TREE("tree"),
+    WARD("ward"),
+    ANCIENT("ancient"),
+    STANDON("standon"),
+    NEURAL("neutral"),
+    TAUREN("tauren", "TaurenClass");
+    private static final Map<String, CUnitClassification> UNIT_EDITOR_KEY_TO_CLASSIFICATION = new HashMap<>();
 
-	private String localeKey;
-	private String unitDataKey;
-	private String displayName;
+    static {
+        for (final CUnitClassification unitClassification : values()) {
+            UNIT_EDITOR_KEY_TO_CLASSIFICATION.put(unitClassification.getUnitDataKey(), unitClassification);
+        }
+    }
 
-	private CUnitClassification(final String unitDataKey, final String localeKey) {
-		this.unitDataKey = unitDataKey;
-		this.localeKey = localeKey;
-	}
+    private final String localeKey;
+    private final String unitDataKey;
+    private String displayName;
 
-	private CUnitClassification(final String unitDataKey) {
-		this.unitDataKey = unitDataKey;
-		this.localeKey = null;
-	}
+    CUnitClassification(final String unitDataKey, final String localeKey) {
+        this.unitDataKey = unitDataKey;
+        this.localeKey = localeKey;
+    }
 
-	public String getUnitDataKey() {
-		return this.unitDataKey;
-	}
+    CUnitClassification(final String unitDataKey) {
+        this.unitDataKey = unitDataKey;
+        this.localeKey = null;
+    }
 
-	public String getLocaleKey() {
-		return this.localeKey;
-	}
+    public static CUnitClassification parseUnitClassification(final String unitEditorKey) {
+        return UNIT_EDITOR_KEY_TO_CLASSIFICATION.get(unitEditorKey.toLowerCase());
+    }
 
-	public String getDisplayName() {
-		return this.displayName;
-	}
+    public String getUnitDataKey() {
+        return this.unitDataKey;
+    }
 
-	public void setDisplayName(final String displayName) {
-		this.displayName = displayName;
-	}
+    public String getLocaleKey() {
+        return this.localeKey;
+    }
 
-	public static CUnitClassification parseUnitClassification(final String unitEditorKey) {
-		return UNIT_EDITOR_KEY_TO_CLASSIFICATION.get(unitEditorKey.toLowerCase());
-	}
+    public String getDisplayName() {
+        return this.displayName;
+    }
+
+    public void setDisplayName(final String displayName) {
+        this.displayName = displayName;
+    }
 }

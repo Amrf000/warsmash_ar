@@ -18,99 +18,96 @@ import com.etheller.warsmash.viewer5.handlers.w3x.simulation.util.AbilityTargetC
 import com.etheller.warsmash.viewer5.handlers.w3x.simulation.util.SimulationRenderComponent;
 
 public class CBuffImmolationCaster extends AbstractGenericNoIconAbility {
-	private final CAbilityImmolation abilityImmolation;
-	private SimulationRenderComponent fx;
-	private int nextDamageTick;
-	private final Rectangle recycleRect = new Rectangle();
+    private final CAbilityImmolation abilityImmolation;
+    private final Rectangle recycleRect = new Rectangle();
+    private SimulationRenderComponent fx;
+    private int nextDamageTick;
 
-	public CBuffImmolationCaster(final int handleId, final War3ID alias, final CAbilityImmolation abilityImmolation) {
-		super(handleId, alias);
-		this.abilityImmolation = abilityImmolation;
-	}
+    public CBuffImmolationCaster(final int handleId, final War3ID alias, final CAbilityImmolation abilityImmolation) {
+        super(handleId, alias);
+        this.abilityImmolation = abilityImmolation;
+    }
 
-	@Override
-	public void onAdd(final CSimulation game, final CUnit unit) {
-		this.fx = game.createSpellEffectOnUnit(unit, this.abilityImmolation.getBuffId(), CEffectType.TARGET, 0);
-	}
+    @Override
+    public void onAdd(final CSimulation game, final CUnit unit) {
+        this.fx = game.createSpellEffectOnUnit(unit, this.abilityImmolation.getBuffId(), CEffectType.TARGET, 0);
+    }
 
-	@Override
-	public void onRemove(final CSimulation game, final CUnit unit) {
-		this.fx.remove();
-	}
+    @Override
+    public void onRemove(final CSimulation game, final CUnit unit) {
+        this.fx.remove();
+    }
 
-	@Override
-	public void onTick(final CSimulation game, final CUnit caster) {
-		final int currentTick = game.getGameTurnTick();
-		if (currentTick >= this.nextDamageTick) {
-			final int delayTicks = (int) (this.abilityImmolation.getDuration()
-					/ WarsmashConstants.SIMULATION_STEP_TIME);
-			final float areaOfEffect = CBuffImmolationCaster.this.abilityImmolation.getAreaOfEffect();
-			this.nextDamageTick = currentTick + delayTicks;
-			this.recycleRect.set(caster.getX() - areaOfEffect, caster.getY() - areaOfEffect, areaOfEffect * 2,
-					areaOfEffect * 2);
-			game.getWorldCollision().enumUnitsInRect(this.recycleRect, new CUnitEnumFunction() {
-				@Override
-				public boolean call(final CUnit enumUnit) {
-					if (caster.canReach(enumUnit, areaOfEffect) && enumUnit.canBeTargetedBy(game, caster,
-							CBuffImmolationCaster.this.abilityImmolation.getTargetsAllowed())) {
-						enumUnit.damage(game, caster, CAttackType.SPELLS, CWeaponSoundTypeJass.WHOKNOWS.name(),
-								CBuffImmolationCaster.this.abilityImmolation.getDamagePerInterval());
-						game.createSpellEffectOnUnit(enumUnit, CBuffImmolationCaster.this.abilityImmolation.getBuffId(),
-								CEffectType.SPECIAL, 0).remove();
-					}
-					return false;
-				}
-			});
-		}
-	}
+    @Override
+    public void onTick(final CSimulation game, final CUnit caster) {
+        final int currentTick = game.getGameTurnTick();
+        if (currentTick >= this.nextDamageTick) {
+            final int delayTicks = (int) (this.abilityImmolation.getDuration()
+                    / WarsmashConstants.SIMULATION_STEP_TIME);
+            final float areaOfEffect = CBuffImmolationCaster.this.abilityImmolation.getAreaOfEffect();
+            this.nextDamageTick = currentTick + delayTicks;
+            this.recycleRect.set(caster.getX() - areaOfEffect, caster.getY() - areaOfEffect, areaOfEffect * 2,
+                    areaOfEffect * 2);
+            game.getWorldCollision().enumUnitsInRect(this.recycleRect, enumUnit -> {
+                if (caster.canReach(enumUnit, areaOfEffect) && enumUnit.canBeTargetedBy(game, caster,
+                        CBuffImmolationCaster.this.abilityImmolation.getTargetsAllowed())) {
+                    enumUnit.damage(game, caster, CAttackType.SPELLS, CWeaponSoundTypeJass.WHOKNOWS.name(),
+                            CBuffImmolationCaster.this.abilityImmolation.getDamagePerInterval());
+                    game.createSpellEffectOnUnit(enumUnit, CBuffImmolationCaster.this.abilityImmolation.getBuffId(),
+                            CEffectType.SPECIAL, 0).remove();
+                }
+                return false;
+            });
+        }
+    }
 
-	@Override
-	public void onDeath(final CSimulation game, final CUnit cUnit) {
+    @Override
+    public void onDeath(final CSimulation game, final CUnit cUnit) {
 
-	}
+    }
 
-	@Override
-	public void onCancelFromQueue(final CSimulation game, final CUnit unit, final int orderId) {
-	}
+    @Override
+    public void onCancelFromQueue(final CSimulation game, final CUnit unit, final int orderId) {
+    }
 
-	@Override
-	public CBehavior begin(final CSimulation game, final CUnit caster, final int orderId, final CWidget target) {
-		return null;
-	}
+    @Override
+    public CBehavior begin(final CSimulation game, final CUnit caster, final int orderId, final CWidget target) {
+        return null;
+    }
 
-	@Override
-	public CBehavior begin(final CSimulation game, final CUnit caster, final int orderId,
-			final AbilityPointTarget point) {
-		return null;
-	}
+    @Override
+    public CBehavior begin(final CSimulation game, final CUnit caster, final int orderId,
+                           final AbilityPointTarget point) {
+        return null;
+    }
 
-	@Override
-	public CBehavior beginNoTarget(final CSimulation game, final CUnit caster, final int orderId) {
-		return null;
-	}
+    @Override
+    public CBehavior beginNoTarget(final CSimulation game, final CUnit caster, final int orderId) {
+        return null;
+    }
 
-	@Override
-	public void checkCanTarget(final CSimulation game, final CUnit unit, final int orderId, final CWidget target,
-			final AbilityTargetCheckReceiver<CWidget> receiver) {
-		receiver.orderIdNotAccepted();
-	}
+    @Override
+    public void checkCanTarget(final CSimulation game, final CUnit unit, final int orderId, final CWidget target,
+                               final AbilityTargetCheckReceiver<CWidget> receiver) {
+        receiver.orderIdNotAccepted();
+    }
 
-	@Override
-	public void checkCanTarget(final CSimulation game, final CUnit unit, final int orderId,
-			final AbilityPointTarget target, final AbilityTargetCheckReceiver<AbilityPointTarget> receiver) {
-		receiver.orderIdNotAccepted();
-	}
+    @Override
+    public void checkCanTarget(final CSimulation game, final CUnit unit, final int orderId,
+                               final AbilityPointTarget target, final AbilityTargetCheckReceiver<AbilityPointTarget> receiver) {
+        receiver.orderIdNotAccepted();
+    }
 
-	@Override
-	public void checkCanTargetNoTarget(final CSimulation game, final CUnit unit, final int orderId,
-			final AbilityTargetCheckReceiver<Void> receiver) {
-		receiver.orderIdNotAccepted();
-	}
+    @Override
+    public void checkCanTargetNoTarget(final CSimulation game, final CUnit unit, final int orderId,
+                                       final AbilityTargetCheckReceiver<Void> receiver) {
+        receiver.orderIdNotAccepted();
+    }
 
-	@Override
-	protected void innerCheckCanUse(final CSimulation game, final CUnit unit, final int orderId,
-			final AbilityActivationReceiver receiver) {
-		receiver.notAnActiveAbility();
-	}
+    @Override
+    protected void innerCheckCanUse(final CSimulation game, final CUnit unit, final int orderId,
+                                    final AbilityActivationReceiver receiver) {
+        receiver.notAnActiveAbility();
+    }
 
 }

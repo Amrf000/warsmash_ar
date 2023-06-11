@@ -1,7 +1,7 @@
 package net.warsmash.uberserver;
 
 public enum LobbyGameSpeed {
-	SLOW, NORMAL, FAST;
+    SLOW, NORMAL, FAST;
 
-	public static final LobbyGameSpeed VALUES[] = values();
+    public static final LobbyGameSpeed[] VALUES = values();
 }

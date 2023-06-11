@@ -5,15 +5,15 @@ import com.etheller.warsmash.parsers.fdf.GameUI;
 import com.etheller.warsmash.parsers.fdf.frames.UIFrame;
 
 public interface ClickableFrame extends UIFrame {
-	void mouseDown(final GameUI gameUI, final Viewport uiViewport);
+    void mouseDown(final GameUI gameUI, final Viewport uiViewport);
 
-	void mouseUp(final GameUI gameUI, final Viewport uiViewport);
+    void mouseUp(final GameUI gameUI, final Viewport uiViewport);
 
-	void mouseEnter(final GameUI gameUI, final Viewport uiViewport);
+    void mouseEnter(final GameUI gameUI, final Viewport uiViewport);
 
-	void mouseExit(final GameUI gameUI, final Viewport uiViewport);
+    void mouseExit(final GameUI gameUI, final Viewport uiViewport);
 
-	void onClick(int button);
+    void onClick(int button);
 
-	void mouseDragged(GameUI rootFrame, Viewport uiViewport, float x, float y);
+    void mouseDragged(GameUI rootFrame, Viewport uiViewport, float x, float y);
 }

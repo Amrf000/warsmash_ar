@@ -3,21 +3,21 @@ package com.etheller.interpreter.ast.value;
 import com.etheller.interpreter.ast.statement.JassReturnNothingStatement;
 
 public interface JassType {
-	<TYPE> TYPE visit(JassTypeVisitor<TYPE> visitor);
+    PrimitiveJassType INTEGER = new PrimitiveJassType("integer", IntegerJassValue.ZERO);
+    PrimitiveJassType STRING = new StringJassType("string");
+    PrimitiveJassType CODE = new CodeJassType("code");
+    PrimitiveJassType REAL = new RealJassType("real", RealJassValue.ZERO);
+    PrimitiveJassType BOOLEAN = new PrimitiveJassType("boolean", BooleanJassValue.FALSE);
+    PrimitiveJassType NOTHING = new PrimitiveJassType("nothing",
+            JassReturnNothingStatement.RETURN_NOTHING_NOTICE);
 
-	String getName(); // used for error messages
+    <TYPE> TYPE visit(JassTypeVisitor<TYPE> visitor);
 
-	boolean isAssignableFrom(JassType value);
+    String getName(); // used for error messages
 
-	boolean isNullable();
+    boolean isAssignableFrom(JassType value);
 
-	JassValue getNullValue();
+    boolean isNullable();
 
-	public static final PrimitiveJassType INTEGER = new PrimitiveJassType("integer", IntegerJassValue.ZERO);
-	public static final PrimitiveJassType STRING = new StringJassType("string");
-	public static final PrimitiveJassType CODE = new CodeJassType("code");
-	public static final PrimitiveJassType REAL = new RealJassType("real", RealJassValue.ZERO);
-	public static final PrimitiveJassType BOOLEAN = new PrimitiveJassType("boolean", BooleanJassValue.FALSE);
-	public static final PrimitiveJassType NOTHING = new PrimitiveJassType("nothing",
-			JassReturnNothingStatement.RETURN_NOTHING_NOTICE);
+    JassValue getNullValue();
 }

@@ -1,9 +1,9 @@
 package com.etheller.warsmash;
 
 public interface SingleModelScreen {
-	void setModel(String path);
+    void setModel(String path);
 
-	void alternateModelToBattlenet();
+    void alternateModelToBattlenet();
 
-	void unAlternateModelBackToNormal();
+    void unAlternateModelBackToNormal();
 }

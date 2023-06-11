@@ -10,207 +10,201 @@ import com.hiveworkshop.rms.util.BinaryReader;
 import com.hiveworkshop.rms.util.BinaryWriter;
 
 public abstract class MdlxTimeline<TYPE> {
-	public War3ID name;
-	public InterpolationType interpolationType;
-	public int globalSequenceId = -1;
+    /**
+     * Restricts us to only be able to parse models on one thread at a time, in
+     * return for high performance.
+     */
+    private static final StringBuffer STRING_BUFFER_HEAP = new StringBuffer();
+    public War3ID name;
+    public InterpolationType interpolationType;
+    public int globalSequenceId = -1;
+    public long[] frames;
+    public TYPE[] values;
+    public TYPE[] inTans;
+    public TYPE[] outTans;
 
-	public long[] frames;
-	public TYPE[] values;
-	public TYPE[] inTans;
-	public TYPE[] outTans;
+    public MdlxTimeline() {
 
-	/**
-	 * Restricts us to only be able to parse models on one thread at a time, in
-	 * return for high performance.
-	 */
-	private static final StringBuffer STRING_BUFFER_HEAP = new StringBuffer();
+    }
 
-	public MdlxTimeline() {
+    public void readMdx(final BinaryReader reader, final War3ID name) {
+        this.name = name;
 
-	}
+        final long keyFrameCount = reader.readUInt32();
 
-	public void readMdx(final BinaryReader reader, final War3ID name) {
-		this.name = name;
+        this.interpolationType = InterpolationType.getType(reader.readInt32());
+        this.globalSequenceId = reader.readInt32();
 
-		final long keyFrameCount = reader.readUInt32();
+        this.frames = new long[(int) keyFrameCount];
+        this.values = (TYPE[]) new Object[(int) keyFrameCount];
+        if (this.interpolationType.tangential()) {
+            this.inTans = (TYPE[]) new Object[(int) keyFrameCount];
+            this.outTans = (TYPE[]) new Object[(int) keyFrameCount];
+        }
 
-		this.interpolationType = InterpolationType.getType(reader.readInt32());
-		this.globalSequenceId = reader.readInt32();
+        for (int i = 0; i < keyFrameCount; i++) {
+            this.frames[i] = reader.readInt32();
+            this.values[i] = (readMdxValue(reader));
 
-		this.frames = new long[(int) keyFrameCount];
-		this.values = (TYPE[]) new Object[(int) keyFrameCount];
-		if (this.interpolationType.tangential()) {
-			this.inTans = (TYPE[]) new Object[(int) keyFrameCount];
-			this.outTans = (TYPE[]) new Object[(int) keyFrameCount];
-		}
+            if (this.interpolationType.tangential()) {
+                this.inTans[i] = (readMdxValue(reader));
+                this.outTans[i] = (readMdxValue(reader));
+            }
+        }
+    }
 
-		for (int i = 0; i < keyFrameCount; i++) {
-			this.frames[i] = reader.readInt32();
-			this.values[i] = (readMdxValue(reader));
+    public void writeMdx(final BinaryWriter writer) {
+        writer.writeTag(this.name.getValue());
 
-			if (this.interpolationType.tangential()) {
-				this.inTans[i] = (readMdxValue(reader));
-				this.outTans[i] = (readMdxValue(reader));
-			}
-		}
-	}
+        final int keyframeCount = this.frames.length;
 
-	public void writeMdx(final BinaryWriter writer) {
-		writer.writeTag(this.name.getValue());
+        writer.writeInt32(keyframeCount);
+        writer.writeInt32(this.interpolationType.ordinal());
+        writer.writeInt32(this.globalSequenceId);
 
-		final int keyframeCount = this.frames.length;
+        for (int i = 0; i < keyframeCount; i++) {
+            writer.writeInt32((int) this.frames[i]);
+            writeMdxValue(writer, this.values[i]);
 
-		writer.writeInt32(keyframeCount);
-		writer.writeInt32(this.interpolationType.ordinal());
-		writer.writeInt32(this.globalSequenceId);
+            if (this.interpolationType.tangential()) {
+                writeMdxValue(writer, this.inTans[i]);
+                writeMdxValue(writer, this.outTans[i]);
+            }
+        }
+    }
 
-		for (int i = 0; i < keyframeCount; i++) {
-			writer.writeInt32((int) this.frames[i]);
-			writeMdxValue(writer, this.values[i]);
+    public void readMdl(final MdlTokenInputStream stream, final War3ID name) {
+        this.name = name;
 
-			if (this.interpolationType.tangential()) {
-				writeMdxValue(writer, this.inTans[i]);
-				writeMdxValue(writer, this.outTans[i]);
-			}
-		}
-	}
+        final int keyFrameCount = stream.readInt();
 
-	public void readMdl(final MdlTokenInputStream stream, final War3ID name) {
-		this.name = name;
+        stream.read(); // {
 
-		final int keyFrameCount = stream.readInt();
+        final String token = stream.read();
+        final InterpolationType interpolationType;
+        switch (token) {
+            case MdlUtils.TOKEN_LINEAR:
+                interpolationType = InterpolationType.LINEAR;
+                break;
+            case MdlUtils.TOKEN_HERMITE:
+                interpolationType = InterpolationType.HERMITE;
+                break;
+            case MdlUtils.TOKEN_BEZIER:
+                interpolationType = InterpolationType.BEZIER;
+                break;
+            case MdlUtils.TOKEN_DONT_INTERP:
+            default:
+                interpolationType = InterpolationType.DONT_INTERP;
+                break;
+        }
 
-		stream.read(); // {
+        this.interpolationType = interpolationType;
 
-		final String token = stream.read();
-		final InterpolationType interpolationType;
-		switch (token) {
-		case MdlUtils.TOKEN_DONT_INTERP:
-			interpolationType = InterpolationType.DONT_INTERP;
-			break;
-		case MdlUtils.TOKEN_LINEAR:
-			interpolationType = InterpolationType.LINEAR;
-			break;
-		case MdlUtils.TOKEN_HERMITE:
-			interpolationType = InterpolationType.HERMITE;
-			break;
-		case MdlUtils.TOKEN_BEZIER:
-			interpolationType = InterpolationType.BEZIER;
-			break;
-		default:
-			interpolationType = InterpolationType.DONT_INTERP;
-			break;
-		}
-		;
+        if (stream.peek().equals(MdlUtils.TOKEN_GLOBAL_SEQ_ID)) {
+            stream.read();
+            this.globalSequenceId = stream.readInt();
+        } else {
+            this.globalSequenceId = -1;
+        }
 
-		this.interpolationType = interpolationType;
+        this.frames = new long[keyFrameCount];
+        this.values = (TYPE[]) new Object[keyFrameCount];
+        if (this.interpolationType.tangential()) {
+            this.inTans = (TYPE[]) new Object[keyFrameCount];
+            this.outTans = (TYPE[]) new Object[keyFrameCount];
+        }
+        for (int i = 0; i < keyFrameCount; i++) {
+            this.frames[i] = (stream.readInt());
+            this.values[i] = (readMdlValue(stream));
+            if (interpolationType.tangential()) {
+                stream.read(); // InTan
+                this.inTans[i] = (readMdlValue(stream));
+                stream.read(); // OutTan
+                this.outTans[i] = (readMdlValue(stream));
+            }
+        }
 
-		if (stream.peek().equals(MdlUtils.TOKEN_GLOBAL_SEQ_ID)) {
-			stream.read();
-			this.globalSequenceId = stream.readInt();
-		}
-		else {
-			this.globalSequenceId = -1;
-		}
+        stream.read(); // }
+    }
 
-		this.frames = new long[keyFrameCount];
-		this.values = (TYPE[]) new Object[keyFrameCount];
-		if (this.interpolationType.tangential()) {
-			this.inTans = (TYPE[]) new Object[keyFrameCount];
-			this.outTans = (TYPE[]) new Object[keyFrameCount];
-		}
-		for (int i = 0; i < keyFrameCount; i++) {
-			this.frames[i] = (stream.readInt());
-			this.values[i] = (readMdlValue(stream));
-			if (interpolationType.tangential()) {
-				stream.read(); // InTan
-				this.inTans[i] = (readMdlValue(stream));
-				stream.read(); // OutTan
-				this.outTans[i] = (readMdlValue(stream));
-			}
-		}
+    public void writeMdl(final MdlTokenOutputStream stream) {
+        final int tracksCount = this.frames.length;
+        stream.startBlock(AnimationMap.ID_TO_TAG.get(this.name).getMdlToken(), tracksCount);
 
-		stream.read(); // }
-	}
+        stream.writeFlag(this.interpolationType.toString());
 
-	public void writeMdl(final MdlTokenOutputStream stream) {
-		final int tracksCount = this.frames.length;
-		stream.startBlock(AnimationMap.ID_TO_TAG.get(this.name).getMdlToken(), tracksCount);
+        if (this.globalSequenceId != -1) {
+            stream.writeAttrib(MdlUtils.TOKEN_GLOBAL_SEQ_ID, this.globalSequenceId);
+        }
 
-		stream.writeFlag(this.interpolationType.toString());
+        for (int i = 0; i < tracksCount; i++) {
+            STRING_BUFFER_HEAP.setLength(0);
+            STRING_BUFFER_HEAP.append(this.frames[i]);
+            STRING_BUFFER_HEAP.append(':');
+            writeMdlValue(stream, STRING_BUFFER_HEAP.toString(), this.values[i]);
+            if (this.interpolationType.tangential()) {
+                stream.indent();
+                writeMdlValue(stream, "InTan", this.inTans[i]);
+                writeMdlValue(stream, "OutTan", this.outTans[i]);
+                stream.unindent();
+            }
+        }
 
-		if (this.globalSequenceId != -1) {
-			stream.writeAttrib(MdlUtils.TOKEN_GLOBAL_SEQ_ID, this.globalSequenceId);
-		}
+        stream.endBlock();
+    }
 
-		for (int i = 0; i < tracksCount; i++) {
-			STRING_BUFFER_HEAP.setLength(0);
-			STRING_BUFFER_HEAP.append(this.frames[i]);
-			STRING_BUFFER_HEAP.append(':');
-			writeMdlValue(stream, STRING_BUFFER_HEAP.toString(), this.values[i]);
-			if (this.interpolationType.tangential()) {
-				stream.indent();
-				writeMdlValue(stream, "InTan", this.inTans[i]);
-				writeMdlValue(stream, "OutTan", this.outTans[i]);
-				stream.unindent();
-			}
-		}
+    public long getByteLength() {
+        final int tracksCount = this.frames.length;
+        int size = 16;
 
-		stream.endBlock();
-	}
+        if (tracksCount > 0) {
+            final int bytesPerValue = size() * 4;
+            int valuesPerTrack = 1;
+            if (this.interpolationType.tangential()) {
+                valuesPerTrack = 3;
+            }
 
-	public long getByteLength() {
-		final int tracksCount = this.frames.length;
-		int size = 16;
+            size += (4 + (valuesPerTrack * bytesPerValue)) * tracksCount;
+        }
+        return size;
+    }
 
-		if (tracksCount > 0) {
-			final int bytesPerValue = size() * 4;
-			int valuesPerTrack = 1;
-			if (this.interpolationType.tangential()) {
-				valuesPerTrack = 3;
-			}
+    protected abstract int size();
 
-			size += (4 + (valuesPerTrack * bytesPerValue)) * tracksCount;
-		}
-		return size;
-	}
+    protected abstract TYPE readMdxValue(BinaryReader reader);
 
-	protected abstract int size();
+    protected abstract TYPE readMdlValue(MdlTokenInputStream stream);
 
-	protected abstract TYPE readMdxValue(BinaryReader reader);
+    protected abstract void writeMdxValue(BinaryWriter writer, TYPE value);
 
-	protected abstract TYPE readMdlValue(MdlTokenInputStream stream);
+    protected abstract void writeMdlValue(MdlTokenOutputStream stream, String prefix, TYPE value);
 
-	protected abstract void writeMdxValue(BinaryWriter writer, TYPE value);
+    public War3ID getName() {
+        return this.name;
+    }
 
-	protected abstract void writeMdlValue(MdlTokenOutputStream stream, String prefix, TYPE value);
+    public InterpolationType getInterpolationType() {
+        return this.interpolationType;
+    }
 
-	public War3ID getName() {
-		return this.name;
-	}
+    public int getGlobalSequenceId() {
+        return this.globalSequenceId;
+    }
 
-	public InterpolationType getInterpolationType() {
-		return this.interpolationType;
-	}
+    public long[] getFrames() {
+        return this.frames;
+    }
 
-	public int getGlobalSequenceId() {
-		return this.globalSequenceId;
-	}
+    public TYPE[] getValues() {
+        return this.values;
+    }
 
-	public long[] getFrames() {
-		return this.frames;
-	}
+    public TYPE[] getInTans() {
+        return this.inTans;
+    }
 
-	public TYPE[] getValues() {
-		return this.values;
-	}
-
-	public TYPE[] getInTans() {
-		return this.inTans;
-	}
-
-	public TYPE[] getOutTans() {
-		return this.outTans;
-	}
+    public TYPE[] getOutTans() {
+        return this.outTans;
+    }
 
 }

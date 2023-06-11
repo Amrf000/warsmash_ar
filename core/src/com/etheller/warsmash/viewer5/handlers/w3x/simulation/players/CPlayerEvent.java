@@ -10,36 +10,36 @@ import com.etheller.warsmash.viewer5.handlers.w3x.simulation.CUnit;
 import com.etheller.warsmash.viewer5.handlers.w3x.simulation.trigger.JassGameEventsWar3;
 
 public class CPlayerEvent implements RemovableTriggerEvent {
-	private final GlobalScope globalScope;
-	private final CPlayerJass player;
-	private final Trigger trigger;
-	private final JassGameEventsWar3 eventType;
-	private final TriggerBooleanExpression filter;
+    private final GlobalScope globalScope;
+    private final CPlayerJass player;
+    private final Trigger trigger;
+    private final JassGameEventsWar3 eventType;
+    private final TriggerBooleanExpression filter;
 
-	public CPlayerEvent(final GlobalScope globalScope, final CPlayerJass player, final Trigger trigger,
-			final JassGameEventsWar3 eventType, final TriggerBooleanExpression filter) {
-		this.globalScope = globalScope;
-		this.player = player;
-		this.trigger = trigger;
-		this.eventType = eventType;
-		this.filter = filter;
-	}
+    public CPlayerEvent(final GlobalScope globalScope, final CPlayerJass player, final Trigger trigger,
+                        final JassGameEventsWar3 eventType, final TriggerBooleanExpression filter) {
+        this.globalScope = globalScope;
+        this.player = player;
+        this.trigger = trigger;
+        this.eventType = eventType;
+        this.filter = filter;
+    }
 
-	public Trigger getTrigger() {
-		return this.trigger;
-	}
+    public Trigger getTrigger() {
+        return this.trigger;
+    }
 
-	public JassGameEventsWar3 getEventType() {
-		return this.eventType;
-	}
+    public JassGameEventsWar3 getEventType() {
+        return this.eventType;
+    }
 
-	@Override
-	public void remove() {
-		this.player.removeEvent(this);
-	}
+    @Override
+    public void remove() {
+        this.player.removeEvent(this);
+    }
 
-	public void fire(final CUnit hero, final TriggerExecutionScope scope) {
-		this.globalScope.queueTrigger(this.filter, CommonTriggerExecutionScope.filterScope(scope, hero), this.trigger,
-				scope, scope);
-	}
+    public void fire(final CUnit hero, final TriggerExecutionScope scope) {
+        this.globalScope.queueTrigger(this.filter, CommonTriggerExecutionScope.filterScope(scope, hero), this.trigger,
+                scope, scope);
+    }
 }

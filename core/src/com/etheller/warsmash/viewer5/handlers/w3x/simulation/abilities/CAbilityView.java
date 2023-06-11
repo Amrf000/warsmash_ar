@@ -9,21 +9,21 @@ import com.etheller.warsmash.viewer5.handlers.w3x.simulation.util.AbilityActivat
 import com.etheller.warsmash.viewer5.handlers.w3x.simulation.util.AbilityTargetCheckReceiver;
 
 public interface CAbilityView extends CHandle {
-	void checkCanUse(CSimulation game, CUnit unit, int orderId, AbilityActivationReceiver receiver);
+    void checkCanUse(CSimulation game, CUnit unit, int orderId, AbilityActivationReceiver receiver);
 
-	void checkCanTarget(CSimulation game, CUnit unit, int orderId, CWidget target,
-			AbilityTargetCheckReceiver<CWidget> receiver);
+    void checkCanTarget(CSimulation game, CUnit unit, int orderId, CWidget target,
+                        AbilityTargetCheckReceiver<CWidget> receiver);
 
-	void checkCanTarget(CSimulation game, CUnit unit, int orderId, AbilityPointTarget target,
-			AbilityTargetCheckReceiver<AbilityPointTarget> receiver);
+    void checkCanTarget(CSimulation game, CUnit unit, int orderId, AbilityPointTarget target,
+                        AbilityTargetCheckReceiver<AbilityPointTarget> receiver);
 
-	void checkCanTargetNoTarget(CSimulation game, CUnit unit, int orderId, AbilityTargetCheckReceiver<Void> receiver);
+    void checkCanTargetNoTarget(CSimulation game, CUnit unit, int orderId, AbilityTargetCheckReceiver<Void> receiver);
 
-	int getHandleId();
+    int getHandleId();
 
-	boolean isDisabled();
+    boolean isDisabled();
 
-	boolean isIconShowing();
+    boolean isIconShowing();
 
-	<T> T visit(CAbilityVisitor<T> visitor);
+    <T> T visit(CAbilityVisitor<T> visitor);
 }

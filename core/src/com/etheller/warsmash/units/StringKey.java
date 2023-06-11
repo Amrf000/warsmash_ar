@@ -8,47 +8,40 @@ package com.etheller.warsmash.units;
  * map lookups in a case insensitive way.
  *
  * @author Eric
- *
  */
 public final class StringKey {
-	private final String string;
+    private final String string;
 
-	public StringKey(final String string) {
-		this.string = string;
-	}
+    public StringKey(final String string) {
+        this.string = string;
+    }
 
-	public String getString() {
-		return this.string;
-	}
+    public String getString() {
+        return this.string;
+    }
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = (prime * result) + ((this.string.toLowerCase() == null) ? 0 : this.string.toLowerCase().hashCode());
-		return result;
-	}
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + this.string.toLowerCase().hashCode();
+        return result;
+    }
 
-	@Override
-	public boolean equals(final Object obj) {
-		if (this == obj) {
-			return true;
-		}
-		if (obj == null) {
-			return false;
-		}
-		if (getClass() != obj.getClass()) {
-			return false;
-		}
-		final StringKey other = (StringKey) obj;
-		if (this.string == null) {
-			if (other.string != null) {
-				return false;
-			}
-		}
-		else if (!this.string.equalsIgnoreCase(other.string)) {
-			return false;
-		}
-		return true;
-	}
+    @Override
+    public boolean equals(final Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final StringKey other = (StringKey) obj;
+        if (this.string == null) {
+            return other.string == null;
+        } else return this.string.equalsIgnoreCase(other.string);
+    }
 }

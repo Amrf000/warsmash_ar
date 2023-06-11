@@ -3,14 +3,14 @@ package com.etheller.warsmash.viewer5.handlers.w3x.simulation.trigger.enumtypes;
 import com.etheller.interpreter.ast.util.CHandle;
 
 public enum CPlayerSlotState implements CHandle {
-	EMPTY,
-	PLAYING,
-	LEFT;
+    EMPTY,
+    PLAYING,
+    LEFT;
 
-	public static CPlayerSlotState[] VALUES = values();
+    public static final CPlayerSlotState[] VALUES = values();
 
-	@Override
-	public int getHandleId() {
-		return ordinal();
-	}
+    @Override
+    public int getHandleId() {
+        return ordinal();
+    }
 }

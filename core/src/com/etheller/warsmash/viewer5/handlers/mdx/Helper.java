@@ -6,8 +6,8 @@ import com.hiveworkshop.rms.parsers.mdlx.MdlxGenericObject;
  * An MDX helper.
  */
 public class Helper extends GenericObject {
-	public Helper(final MdxModel model, final MdlxGenericObject object, final int index) {
-		super(model, object, index);
-	}
+    public Helper(final MdxModel model, final MdlxGenericObject object, final int index) {
+        super(model, object, index);
+    }
 
 }

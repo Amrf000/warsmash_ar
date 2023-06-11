@@ -1,7 +1,7 @@
 package net.warsmash.nio.channels;
 
 public interface ChannelListener {
-	void channelOpened();
+    void channelOpened();
 
-	void channelClosed();
+    void channelClosed();
 }

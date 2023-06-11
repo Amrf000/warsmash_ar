@@ -1,7 +1,7 @@
 package com.etheller.warsmash.viewer5;
 
 public interface CanvasProvider {
-	float getWidth();
+    float getWidth();
 
-	float getHeight();
+    float getHeight();
 }

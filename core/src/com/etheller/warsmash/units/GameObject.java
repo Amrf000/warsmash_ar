@@ -6,103 +6,103 @@ import java.util.Set;
 
 public interface GameObject {
 
-	public void setField(String field, String value);
+    GameObject EMPTY = new GameObject() {
 
-	public void setField(String field, String value, int index);
+        @Override
+        public void setField(final String field, final String value, final int index) {
+        }
 
-	public String getField(String field);
+        @Override
+        public void setField(final String field, final String value) {
+        }
 
-	public String getField(String field, int index);
+        @Override
+        public Set<String> keySet() {
+            return Collections.emptySet();
+        }
 
-	public int getFieldValue(String field);
+        @Override
+        public ObjectData getTable() {
+            return null;
+        }
 
-	public int getFieldValue(String field, int index);
+        @Override
+        public String getName() {
+            return "<No data>";
+        }
 
-	public float getFieldFloatValue(String field);
+        @Override
+        public String getId() {
+            return "0000";
+        }
 
-	public float getFieldFloatValue(String field, int index);
+        @Override
+        public int getFieldValue(final String field, final int index) {
+            return 0;
+        }
 
-	public List<? extends GameObject> getFieldAsList(String field, ObjectData objectData);
+        @Override
+        public int getFieldValue(final String field) {
+            return 0;
+        }
 
-	public String getId();
+        @Override
+        public float getFieldFloatValue(final String field) {
+            return 0;
+        }
 
-	public ObjectData getTable();
+        @Override
+        public float getFieldFloatValue(final String field, final int index) {
+            return 0;
+        }
 
-	public String getName();
+        @Override
+        public List<? extends GameObject> getFieldAsList(final String field, final ObjectData objectData) {
+            return Collections.emptyList();
+        }
 
-	public String getLegacyName();
+        @Override
+        public String getField(final String field, final int index) {
+            return "";
+        }
 
-	public Set<String> keySet();
+        @Override
+        public String getField(final String field) {
+            return "";
+        }
 
-	GameObject EMPTY = new GameObject() {
+        @Override
+        public String getLegacyName() {
+            return "custom_0000";
+        }
+    };
 
-		@Override
-		public void setField(final String field, final String value, final int index) {
-		}
+    void setField(String field, String value);
 
-		@Override
-		public void setField(final String field, final String value) {
-		}
+    void setField(String field, String value, int index);
 
-		@Override
-		public Set<String> keySet() {
-			return Collections.emptySet();
-		}
+    String getField(String field);
 
-		@Override
-		public ObjectData getTable() {
-			return null;
-		}
+    String getField(String field, int index);
 
-		@Override
-		public String getName() {
-			return "<No data>";
-		}
+    int getFieldValue(String field);
 
-		@Override
-		public String getId() {
-			return "0000";
-		}
+    int getFieldValue(String field, int index);
 
-		@Override
-		public int getFieldValue(final String field, final int index) {
-			return 0;
-		}
+    float getFieldFloatValue(String field);
 
-		@Override
-		public int getFieldValue(final String field) {
-			return 0;
-		}
+    float getFieldFloatValue(String field, int index);
 
-		@Override
-		public float getFieldFloatValue(final String field) {
-			return 0;
-		}
+    List<? extends GameObject> getFieldAsList(String field, ObjectData objectData);
 
-		@Override
-		public float getFieldFloatValue(final String field, final int index) {
-			return 0;
-		}
+    String getId();
 
-		@Override
-		public List<? extends GameObject> getFieldAsList(final String field, final ObjectData objectData) {
-			return Collections.emptyList();
-		}
+    ObjectData getTable();
 
-		@Override
-		public String getField(final String field, final int index) {
-			return "";
-		}
+    String getName();
 
-		@Override
-		public String getField(final String field) {
-			return "";
-		}
+    String getLegacyName();
 
-		@Override
-		public String getLegacyName() {
-			return "custom_0000";
-		}
-	};
+    Set<String> keySet();
 
 }

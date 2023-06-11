@@ -7,10 +7,10 @@ import com.etheller.interpreter.ast.value.JassValue;
 
 public class JassDoNothingStatement implements JassStatement {
 
-	@Override
-	public JassValue execute(final GlobalScope globalScope, final LocalScope localScope,
-			final TriggerExecutionScope triggerScope) {
-		return null;
-	}
+    @Override
+    public JassValue execute(final GlobalScope globalScope, final LocalScope localScope,
+                             final TriggerExecutionScope triggerScope) {
+        return null;
+    }
 
 }

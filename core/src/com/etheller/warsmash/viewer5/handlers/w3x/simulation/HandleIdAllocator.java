@@ -6,9 +6,9 @@ package com.etheller.warsmash.viewer5.handlers.w3x.simulation;
  * because I forget how it works but I know it uses subtraction on handle IDs.
  */
 public class HandleIdAllocator {
-	private int next = 3412532; // bogus number
+    private int next = 3412532; // bogus number
 
-	public int createId() {
-		return this.next++;
-	}
+    public int createId() {
+        return this.next++;
+    }
 }

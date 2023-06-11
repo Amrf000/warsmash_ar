@@ -11,61 +11,61 @@ import com.etheller.warsmash.viewer5.handlers.w3x.simulation.behaviors.CBehavior
 import com.etheller.warsmash.viewer5.handlers.w3x.simulation.orders.OrderIds;
 
 public class CBehaviorDropItem extends CAbstractRangedBehavior {
-	private final CAbilityInventory inventory;
-	private CItem targetItem;
+    private final CAbilityInventory inventory;
+    private CItem targetItem;
 
-	public CBehaviorDropItem(final CUnit unit, final CAbilityInventory inventory) {
-		super(unit);
-		this.inventory = inventory;
-	}
+    public CBehaviorDropItem(final CUnit unit, final CAbilityInventory inventory) {
+        super(unit);
+        this.inventory = inventory;
+    }
 
-	public CBehaviorDropItem reset(final CItem targetItem, final AbilityPointTarget targetPoint) {
-		innerReset(targetPoint);
-		this.targetItem = targetItem;
-		return this;
-	}
+    public CBehaviorDropItem reset(final CItem targetItem, final AbilityPointTarget targetPoint) {
+        innerReset(targetPoint);
+        this.targetItem = targetItem;
+        return this;
+    }
 
-	@Override
-	public boolean isWithinRange(final CSimulation simulation) {
-		return this.unit.canReach(this.target, simulation.getGameplayConstants().getDropItemRange());
-	}
+    @Override
+    public boolean isWithinRange(final CSimulation simulation) {
+        return this.unit.canReach(this.target, simulation.getGameplayConstants().getDropItemRange());
+    }
 
-	@Override
-	public void endMove(final CSimulation game, final boolean interrupted) {
-	}
+    @Override
+    public void endMove(final CSimulation game, final boolean interrupted) {
+    }
 
-	@Override
-	public void begin(final CSimulation game) {
-	}
+    @Override
+    public void begin(final CSimulation game) {
+    }
 
-	@Override
-	public void end(final CSimulation game, final boolean interrupted) {
-	}
+    @Override
+    public void end(final CSimulation game, final boolean interrupted) {
+    }
 
-	@Override
-	public int getHighlightOrderId() {
-		return OrderIds.dropitem;
-	}
+    @Override
+    public int getHighlightOrderId() {
+        return OrderIds.dropitem;
+    }
 
-	@Override
-	protected CBehavior update(final CSimulation simulation, final boolean withinFacingWindow) {
-		this.inventory.dropItem(simulation, this.unit, this.targetItem, this.target.getX(), this.target.getY(), true);
-		return this.unit.pollNextOrderBehavior(simulation);
-	}
+    @Override
+    protected CBehavior update(final CSimulation simulation, final boolean withinFacingWindow) {
+        this.inventory.dropItem(simulation, this.unit, this.targetItem, this.target.getX(), this.target.getY(), true);
+        return this.unit.pollNextOrderBehavior(simulation);
+    }
 
-	@Override
-	protected CBehavior updateOnInvalidTarget(final CSimulation simulation) {
-		return this.unit.pollNextOrderBehavior(simulation);
-	}
+    @Override
+    protected CBehavior updateOnInvalidTarget(final CSimulation simulation) {
+        return this.unit.pollNextOrderBehavior(simulation);
+    }
 
-	@Override
-	protected boolean checkTargetStillValid(final CSimulation simulation) {
-		return this.target.visit(AbilityTargetStillAliveVisitor.INSTANCE);
-	}
+    @Override
+    protected boolean checkTargetStillValid(final CSimulation simulation) {
+        return this.target.visit(AbilityTargetStillAliveVisitor.INSTANCE);
+    }
 
-	@Override
-	protected void resetBeforeMoving(final CSimulation simulation) {
+    @Override
+    protected void resetBeforeMoving(final CSimulation simulation) {
 
-	}
+    }
 
 }

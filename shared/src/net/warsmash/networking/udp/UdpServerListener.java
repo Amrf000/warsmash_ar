@@ -4,5 +4,5 @@ import java.net.SocketAddress;
 import java.nio.ByteBuffer;
 
 public interface UdpServerListener {
-	void parse(SocketAddress sourceAddress, ByteBuffer buffer);
+    void parse(SocketAddress sourceAddress, ByteBuffer buffer);
 }

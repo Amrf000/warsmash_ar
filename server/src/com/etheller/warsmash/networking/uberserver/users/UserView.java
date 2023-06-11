@@ -1,19 +1,19 @@
 package com.etheller.warsmash.networking.uberserver.users;
 
 public interface UserView {
-	String getUsername();
+    String getUsername();
 
-	String getPasswordHash();
+    String getPasswordHash();
 
-	String getHash();
+    String getHash();
 
-	UserStats getUserStats();
+    UserStats getUserStats();
 
-	UserRanking getUserRanking();
+    UserRanking getUserRanking();
 
-	int getLevel();
+    int getLevel();
 
-	int getExperience();
+    int getExperience();
 
-	int getId();
+    int getId();
 }

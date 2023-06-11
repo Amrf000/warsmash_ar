@@ -6,25 +6,25 @@ import com.etheller.interpreter.ast.value.JassTypeVisitor;
 import com.etheller.interpreter.ast.value.PrimitiveJassType;
 
 public class SuperTypeVisitor implements JassTypeVisitor<HandleJassType> {
-	private static final SuperTypeVisitor INSTANCE = new SuperTypeVisitor();
+    private static final SuperTypeVisitor INSTANCE = new SuperTypeVisitor();
 
-	public static SuperTypeVisitor getInstance() {
-		return INSTANCE;
-	}
+    public static SuperTypeVisitor getInstance() {
+        return INSTANCE;
+    }
 
-	@Override
-	public HandleJassType accept(final PrimitiveJassType primitiveType) {
-		return null;
-	}
+    @Override
+    public HandleJassType accept(final PrimitiveJassType primitiveType) {
+        return null;
+    }
 
-	@Override
-	public HandleJassType accept(final ArrayJassType arrayType) {
-		return null;
-	}
+    @Override
+    public HandleJassType accept(final ArrayJassType arrayType) {
+        return null;
+    }
 
-	@Override
-	public HandleJassType accept(final HandleJassType type) {
-		return type.getSuperType();
-	}
+    @Override
+    public HandleJassType accept(final HandleJassType type) {
+        return type.getSuperType();
+    }
 
 }

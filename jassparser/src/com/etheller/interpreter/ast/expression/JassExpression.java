@@ -6,5 +6,5 @@ import com.etheller.interpreter.ast.scope.TriggerExecutionScope;
 import com.etheller.interpreter.ast.value.JassValue;
 
 public interface JassExpression {
-	JassValue evaluate(GlobalScope globalScope, LocalScope localScope, TriggerExecutionScope triggerScope);
+    JassValue evaluate(GlobalScope globalScope, LocalScope localScope, TriggerExecutionScope triggerScope);
 }
