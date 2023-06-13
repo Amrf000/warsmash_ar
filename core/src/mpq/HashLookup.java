@@ -2,16 +2,27 @@ package mpq;
 
 import mpq.util.Cryption;
 
+
 import java.io.Serializable;
+import java.util.HashMap;
 
 public class HashLookup implements Serializable {
     private static final long serialVersionUID = -731458056988218435L;
-
+    private static HashMap<String,HashLookup> cacheHash = new HashMap<>();
     public final byte[] lookup;
     public final long hash;
     public final int index;
 
-    public HashLookup(String path) {
+    public static HashLookup GetHashLookup(String path)  {
+        if(cacheHash.containsKey(path)) {
+            return cacheHash.get(path);
+        }
+        HashLookup obj = new HashLookup(path);
+        cacheHash.put(path, obj);
+        return obj;
+    }
+
+    protected HashLookup(String path) {
         // *** convert string to 8 bit ascii
         byte[] raw = Cryption.stringToHashable(path);
 
@@ -32,4 +43,7 @@ public class HashLookup implements Serializable {
         lookup = new byte[raw.length - index];
         System.arraycopy(raw, index, lookup, 0, lookup.length);
     }
+
+
+
 }

@@ -38,7 +38,7 @@ public class CommonTriggerExecutionScope extends TriggerExecutionScope {
     private int learnedSkill;
     private int learnedSkillLevel;
     private CUnit revivableUnit;
-    private CUnit revivingUnit;
+
     private CUnit attacker;
     private CUnit rescuer;
     private CUnit dyingUnit;
@@ -432,10 +432,6 @@ public class CommonTriggerExecutionScope extends TriggerExecutionScope {
 
     public CUnit getLeavingUnit() {
         return this.leavingUnit;
-    }
-
-    public CUnit getRevivingUnit() {
-        return this.revivingUnit;
     }
 
     public CUnit getAttacker() {

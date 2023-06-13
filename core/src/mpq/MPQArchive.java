@@ -276,7 +276,7 @@ public class MPQArchive {
     }
 
     public void lookupPath(String path) throws MPQException {
-        hashTable.lookupBlock(new HashLookup(path));
+        hashTable.lookupBlock(HashLookup.GetHashLookup(path));
     }
 
 

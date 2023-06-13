@@ -2,16 +2,12 @@ package com.etheller.interpreter.ast;
 
 import com.etheller.interpreter.JassLexer;
 import com.etheller.interpreter.JassParser;
-import com.etheller.interpreter.ast.function.JassFunction;
-import com.etheller.interpreter.ast.scope.GlobalScope;
-import com.etheller.interpreter.ast.scope.TriggerExecutionScope;
 import com.etheller.interpreter.ast.value.JassValue;
 import com.etheller.interpreter.ast.value.visitor.StringJassValueVisitor;
 import com.etheller.interpreter.ast.visitors.JassProgramVisitor;
 import org.antlr.v4.runtime.*;
 
 import java.util.Collections;
-import java.util.List;
 
 public class JassRunner {
     public static final boolean REPORT_SYNTAX_ERRORS = true;

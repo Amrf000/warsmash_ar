@@ -30,7 +30,7 @@ public class MpqDataSource implements DataSource {
     public InputStream getResourceAsStream(final String filepath) throws IOException {
         ArchivedFile file;
         try {
-            file = this.archive.lookupHash2(new HashLookup(filepath));
+            file = this.archive.lookupHash2(HashLookup.GetHashLookup(filepath));
         } catch (final MPQException exc) {
             if (exc.getMessage().equals("lookup not found")) {
                 return null;
@@ -46,7 +46,7 @@ public class MpqDataSource implements DataSource {
     public ByteBuffer read(final String path) throws IOException {
         ArchivedFile file;
         try {
-            file = this.archive.lookupHash2(new HashLookup(path));
+            file = this.archive.lookupHash2(HashLookup.GetHashLookup(path));
         } catch (final MPQException exc) {
             if (exc.getMessage().equals("lookup not found")) {
                 return null;
@@ -67,7 +67,7 @@ public class MpqDataSource implements DataSource {
         // TODO Auto-generated method stub
         ArchivedFile file;
         try {
-            file = this.archive.lookupHash2(new HashLookup(filepath));
+            file = this.archive.lookupHash2(HashLookup.GetHashLookup(filepath));
         } catch (final MPQException exc) {
             if (exc.getMessage().equals("lookup not found")) {
                 return null;
@@ -114,7 +114,7 @@ public class MpqDataSource implements DataSource {
         try {
             final Set<String> listfile = new HashSet<>();
             ArchivedFile listfileContents;
-            listfileContents = this.archive.lookupHash2(new HashLookup("(listfile)"));
+            listfileContents = this.archive.lookupHash2(HashLookup.GetHashLookup("(listfile)"));
             final ArchivedFileStream stream = new ArchivedFileStream(this.inputChannel, this.extractor,
                     listfileContents);
             final InputStream newInputStream = Channels.newInputStream(stream);
